@@ -20,7 +20,7 @@
  * saveInventory(player);
  * loadInventory(player);
  */
-function saveInventory(player, invName = player.name, storage = player) {
+export function saveInventory(player, invName = player.name, storage = player) {
     let { container, inventorySize } = player.getComponent("inventory");
     const items = [];
     const listOfEquipmentSlots = ["Head", "Chest", "Legs", "Feet", "Offhand"];
@@ -95,7 +95,7 @@ function saveInventory(player, invName = player.name, storage = player) {
  * saveInventory(player);
  * loadInventory(player);
  */
-function loadInventory(player, invName = player.name, storage = player) {
+export function loadInventory(player, invName = player.name, storage = player) {
     let { container, inventorySize } = player.getComponent("inventory");
     const items = JSON.parse(storage.getDynamicProperty(`inventory:${invName}`) ?? "[]");
     const wornArmor = JSON.parse(storage.getDynamicProperty(`armor:${invName}`) ?? "[]");
@@ -153,7 +153,7 @@ function loadInventory(player, invName = player.name, storage = player) {
  * 
  * world.sendMessage(`${getRandomNumber(1, 10)}`);
  */
-function getRandomNumber(min, max) {
+export function getRandomNumber(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min; 
 }
  
@@ -168,7 +168,7 @@ function getRandomNumber(min, max) {
  * const player = world.getPlayers()[0];
  * getDevice(player);
  */
-function getDevice(player) {
+export function getDevice(player) {
     const { platformType, memoryTier, maxRenderDistance } = player.clientSystemInfo;
     if (maxRenderDistance < 6 || maxRenderDistance > 96 || platformType === null) return "Bot";
     if (platformType === "Desktop") return "Windows";
@@ -210,7 +210,7 @@ function getDevice(player) {
  * const values = moveToLocation(entity, { x: 10, y: 200, z: 5 }, 0.5);
  * entity.applyKnockback(values.x, values.z, values.strength, values.y);
 */
-function moveToLocation(entity, targetPos, speed) {
+export function moveToLocation(entity, targetPos, speed) {
     const pos = entity.location;
     const dx = targetPos.x - pos.x, dy = targetPos.y - pos.y, dz = targetPos.z - pos.z;
     const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
@@ -235,7 +235,7 @@ function moveToLocation(entity, targetPos, speed) {
  * const player = world.getPlayers()[0];
  * isUnderground(player);
  */
-function isUnderground(player) {
+export function isUnderground(player) {
     if (player.dimension.heightRange.min > player.location.y) return true;
     if (player.dimension.heightRange.max < player.location.y) return false;
   
@@ -258,7 +258,7 @@ function isUnderground(player) {
  * const player = world.getPlayers()[0];
  * isPlayerOnSurface(player);
  */
-function isPlayerOnSurface(player) {
+export function isPlayerOnSurface(player) {
     const location = player.location;
     const blockBelow = player.dimension.getBlock(new Vec3(player.location.x, player.location.y, player.location.z).subtract({ x: 0, y: 1, z: 0 }));
     const blockAbove = player.dimension.getBlock(new Vec3(location.x, location.y, location.z).add({ x: 0, y: 1, z: 0 }));
@@ -296,7 +296,7 @@ function isPlayerOnSurface(player) {
  *   });
  *  }
  */
-function placeBlockAboveWater(player, permutationToPlace, location) {
+export function placeBlockAboveWater(player, permutationToPlace, location) {
     for (let i = 0; i < 8; i++) {
         if (player.location.y < location.y) break;
         const block = player.dimension.getBlock(location);
@@ -322,7 +322,7 @@ function placeBlockAboveWater(player, permutationToPlace, location) {
  * @param {Player} player The player to get the Cardinal direction of
  * @returns {"up"|"down"|"north"|"east"|"south"|"west"}
  */
-function getCardinalDirection(player) {
+export function getCardinalDirection(player) {
     const yaw = player.getRotation().y;
     const pitch = player.getRotation().x;
     if (pitch > 85) return 'down';
@@ -359,7 +359,7 @@ function getCardinalDirection(player) {
  * @throws If the amount is not a positive integer.
  * @throws If the location is not valid.
  */
-function spawnItem(Dimension, typeId, location, amount = 1, nameTag = null) {
+export function spawnItem(Dimension, typeId, location, amount = 1, nameTag = null) {
     // Error Handling
     if (!Dimension || typeof Dimension.spawnItem !== "function") {
         console.error("Error: Invalid Dimension object. Ensure it has a spawnItem method.");
@@ -392,56 +392,6 @@ function spawnItem(Dimension, typeId, location, amount = 1, nameTag = null) {
 }
 
 
-
-
-
-//======================================
-// BLOCKS SECTION
-//======================================
-
-/**
- * Breaks blocks from start block
- * @param {Block} startBlock The block to start breaking from
- * @param {number} volumeWidth The width of the volume
- * @param {number} volumeHeight The height of the volume
- * @param {number} volumeDepth The depth of the volume
- * @param {string} replacementBlockType The block to replace the broken blocks with
- * @example
- * import { world, system } from "@minecraft/server"
- * 
- * const block = world.getDimension("overworld").getBlock({x: 0, y: 0, z: 0});
- * breakBlocksFromStartBlock(block, 5, 5, 5, "stone"); // Fills a 5x5x5 cube with stone
- */
-function breakBlocksFromStartBlock(startBlock, volumeWidth = 3, volumeHeight = 3, volumeDepth = 3, replacementBlockType = 'air') {
-    const { brokenBlockPermutation, block, dimension } = startBlock;
-    const typeId = brokenBlockPermutation.type.id;
-    const item = new ItemStack(typeId, 1);
-    // Calculate the bounds of the volume to reduce overhead
-    const halfWidth = Math.floor(volumeWidth / 2);
-    const halfHeight = Math.floor(volumeHeight / 2);
-    const halfDepth = Math.floor(volumeDepth / 2);
-    const minX = block.location.x - halfWidth;
-    const minY = block.location.y - halfHeight;
-    const minZ = block.location.z - halfDepth;
-    const maxX = block.location.x + halfWidth;
-    const maxY = block.location.y + halfHeight;
-    const maxZ = block.location.z + halfDepth;
-    // Iterate directly within the volume bounds
-    for (let x = minX; x <= maxX; x++) {
-        for (let y = minY; y <= maxY; y++) {
-            for (let z = minZ; z <= maxZ; z++) {
-                const location = { x, y, z };
-                const currentBlock = dimension.getBlock(location);
-                dimension.setBlockType(location, replacementBlockType); // Replace with the specified block type
-                dimension.spawnItem(item, location);
-            }
-        }
-    }
-}
-
-
-
-
 //======================================
 // EVENTS SECTION
 //======================================
@@ -457,7 +407,7 @@ function breakBlocksFromStartBlock(startBlock, volumeWidth = 3, volumeHeight = 3
  *  console.log(`Player ${event.player.name} shot at ${event.target.name}`);
  * });
  */
-function detectPlayerShootsEvent(callBack, whom = null) {
+export function detectPlayerShootsEvent(callBack, whom = null) {
     world.afterEvents.entitySpawn.subscribe(({ entity }) => {
         if (entity.typeId !== 'minecraft:arrow' && entity.typeId !== 'minecraft:trident')
             return;
@@ -492,7 +442,7 @@ function detectPlayerShootsEvent(callBack, whom = null) {
  *  console.log(`Player ${player.name} did a double jump!`);
  * });
  */
-function detectDoubleJumpEvent(callBack) {
+export function detectDoubleJumpEvent(callBack) {
     system.runInterval(() => {
         world.getAllPlayers().forEach(player => {
             // Initialize jump tracking if not set
@@ -534,7 +484,7 @@ function detectDoubleJumpEvent(callBack) {
  * @throws If player is not a Player.
  * @throws if Player doesn't have a `riding` component
  */
-function isRidingEntity(player, entityType) {
+export function isRidingEntity(player, entityType) {
     // Validate the player object
     if (!player || typeof player.getComponent !== 'function') {
         throw new Error('Invalid player object provided. Player must have a `getComponent` method.');
@@ -566,7 +516,7 @@ function isRidingEntity(player, entityType) {
  * const player = world.getPlayers()[0];
  * const hasDiamonds = isHavingItemQuantity(player, "minecraft:diamond", 5);
  */
-function isHavingItemQuantity(player, typeId, required) {
+export function isHavingItemQuantity(player, typeId, required) {
     const inventoryComponent = player.getComponent("inventory");
     const container = inventoryComponent.container;
     if (container === undefined) {
@@ -595,7 +545,7 @@ function isHavingItemQuantity(player, typeId, required) {
  *  world.sendMessage(`${player.name} is in creative!`)
  * };
  */
-const isCreative = (player) => player.getGameMode() == GameMode.creative
+export const isCreative = (player) => player.getGameMode() == GameMode.creative
 
 
 //======================================
@@ -618,7 +568,7 @@ const isCreative = (player) => player.getGameMode() == GameMode.creative
  * @throws If sourceItem is not enchantable
  * @throws If destinationItem is not enchantable
  */
-function transferEnchantments(sourceItem, destinationItem) {
+export function transferEnchantments(sourceItem, destinationItem) {
     const sourceEnchantable = sourceItem.getComponent("enchantable");
     if (!sourceEnchantable)
         throw new Error("Source item is not enchantable");
