@@ -183,4 +183,4 @@ export function isRidingEntity(player, entityType) {
  *  world.sendMessage(`${player.name} is in creative!`)
  * };
  */
-export const isCreative = (player) => player.getGameMode() == GameMode.creative
+export const isCreative = (player) => player.getGameMode() == (GameMode.creative || GameMode.Create)
