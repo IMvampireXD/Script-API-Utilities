@@ -195,4 +195,46 @@ export class DimensionUtils {
             })())
         })
     }
+    /**
+     * Returns which player is in which dimension.
+     * @author Dmahonjr06
+     * @param {DimensionTypes.typeId} [dimensionType] - The dimension to check if someone entered. e.g; "minecraft:overworld", "minecraft:nether", "minecraft:end"
+     * @param {Boolean} [chatOutput] - A boolean for if the output information is to be sent to the chats of Operators.
+     * @requires - scripting version 2.0.0-beta if [chatOutput]
+     * @example
+     * import { DimensionUtils } from "./utilities/dimension-utilities";
+     * 
+     * //Used to monitor if someone enters the Nether. For moderation purposes
+       DimensionUtils.logAllPlayersEnteringDimension("minecraft:nether", true);
+     */
+
+    // TODO: Make a @param for chatOutput. If true, send a message to players that have isOp = true
+    static async logAllPlayersEnteringDimension(dimensionType = undefined, chatOutput = false) {
+        world.afterEvents.playerDimensionChange.subscribe(e=>{
+            let allPlayers = world.getAllPlayers()
+            const {toDimension, toLocation, player, fromLocation, fromDimension} = e;
+            try {
+                if(typeof dimensionType !== "string") throw new Error(`dimensionType is a ${typeof dimensionType}. dimensionType needs to be a string`);
+                if(dimensionType !== ("minecraft:overworld"||"minecraft:nether"||"minecraft:end") && typeof dimensionType == "string") throw new Error(`dimensionType needs to be a DimensionType; "minecraft:overworld", "minecraft:nether" or "minecraft:end"`);
+            } catch (error) {
+                console.error(error)
+            }
+            if (toDimension.id == dimensionType && chatOutput){
+                console.log("test")
+                allPlayers.forEach(player => {
+                    if (player.isOp())
+                    {
+                        player.sendMessage(`\n${e.player.name} has entered the ${dimensionType}\nThey entered at co-ordinates: ${fromLocation.x.toFixed(0)}, ${fromLocation.y.toFixed(0)}, ${fromLocation.z.toFixed(0)} in the ${fromDimension.id} and exited at co-ordinates: ${toLocation.x.toFixed(0)}, ${toLocation.y.toFixed(0)}, ${toLocation.z.toFixed(0)} in the ${toDimension.id}`)
+                    } else {
+                        throw new Error("There are no players that are operator!"); 
+                    };
+                    }
+                );
+            };
+            if (toDimension.id == dimensionType && !chatOutput){
+                console.log(`\n${player.name} has entered the ${dimensionType}\nThey entered at co-ordinates: ${fromLocation.x.toFixed(0)}, ${fromLocation.y.toFixed(0)}, ${fromLocation.z.toFixed(0)} in the ${fromDimension.id} and exited at co-ordinates: ${toLocation.x.toFixed(0)}, ${toLocation.y.toFixed(0)}, ${toLocation.z.toFixed(0)} `)
+            }
+            
+        })
+    }
 }
