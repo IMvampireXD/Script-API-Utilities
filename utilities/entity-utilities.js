@@ -183,4 +183,7 @@ export function isRidingEntity(player, entityType) {
  *  world.sendMessage(`${player.name} is in creative!`)
  * };
  */
-export const isCreative = (player) => player.getGameMode() == (GameMode.creative || GameMode.Create)
+export const isCreative = (player) => player.getGameMode() == (GameMode.creative || GameMode.Creative)
+export const isSurvival = (player) => player.getGameMode() == (GameMode.survival || GameMode.Survival)
+export const isSpectator = (player) => player.getGameMode() == (GameMode.spectator || GameMode.Spectator)
+export const isAdventure = (player) => player.getGameMode() == (GameMode.adventure || GameMode.Adventure)
