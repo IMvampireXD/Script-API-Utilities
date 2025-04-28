@@ -66,14 +66,14 @@ Download the utlities folder.
 And import the functions as your need, in your script, Example:
 
 ```js
-import { MathUtils } from "./utilities/math-utilities.js";
+import { Random } from "./utilities/math-utilities.js";
 import { InventoryUtils } from "./utilities/inventory-utilities.js";
 import { DimensionUtils } from "./utilities/dimension-utilities.js";
 import { CustomEvents } from "./utilities/custom-events.js";
 import { EntityUtils } from "./utilities/entity-utilities.js";
 
 // Returns random number between 1 and 5.
-console.warn(MathUtils.getRandomNumber(1, 5));
+console.warn(Random.int(1, 5));
 
 // Get the player "Steve" by name, easily by using the library.
 const player = DimensionUtils.getPlayerByName("Steve");
