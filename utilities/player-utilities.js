@@ -259,13 +259,15 @@ export class PlayerUtils {
      * @param {Player} player The player to check
      * @returns {boolean}
      * @example 
-     * import { world } from "@minecraft/server"
-     * import { PlayerUtils } from "./utilities/player-utilities";
-     * 
-     * const player = world.getPlayers()[0];
-     * if (PlayerUtils.isCreative(player)) {
-     *  world.sendMessage(`${player.name} is in creative!`)
-     * };
+      import { world } from "@minecraft/server"
+      import { PlayerUtils } from "./utilities/player-utilities";
+      
+      world.afterEvents.playerInteractWithBlock.subscribe(event=> {
+         const player = event.player
+         if (PlayerUtils.isCreative(player)){
+             console.log("Player is in Creative")
+         }
+      })
     */
     static isCreative = (player) => player.getGameMode() == (GameMode.creative || GameMode.Creative)
 
@@ -274,13 +276,15 @@ export class PlayerUtils {
      * @param {Player} player The player to check
      * @returns {boolean}
      * @example 
-     * import { world } from "@minecraft/server"
-     * import { PlayerUtils } from "./utilities/player-utilities";
-     * 
-     * const player = world.getPlayers()[0];
-     * if (PlayerUtils.isSurvival(player)) {
-     *  world.sendMessage(`${player.name} is in Survival!`)
-     * };
+      import { world } from "@minecraft/server"
+      import { PlayerUtils } from "./utilities/player-utilities";
+      
+      world.afterEvents.playerInteractWithBlock.subscribe(event=> {
+        const player = event.player
+        if (PlayerUtils.isSurvival(player)){
+            console.log("Player is in Survival")
+        }
+      })
     */
     static isSurvival = (player) => player.getGameMode() == (GameMode.survival || GameMode.Survival)
 
@@ -288,29 +292,33 @@ export class PlayerUtils {
      * checks if player is in Spectator
      * @param {Player} player The player to check
      * @returns {boolean}
-     * @example
-     * import { world } from "@minecraft/server"
-     * import { PlayerUtils } from "./utilities/player-utilities";
-     * 
-     * const player = world.getPlayers()[0];
-     * if (PlayerUtils.isSpectator(player)) {
-     *  world.sendMessage(`${player.name} is in Spectator!`)
-     * };
-     */
+     * @example 
+      import { world } from "@minecraft/server"
+      import { PlayerUtils } from "./utilities/player-utilities";
+      
+      world.afterEvents.playerInteractWithBlock.subscribe(event=> {
+        const player = event.player
+        if (PlayerUtils.isSpectator(player)){
+            console.log("Player is in Spectator")
+        }
+      })
+    */
     static isSpectator = (player) => player.getGameMode() == (GameMode.spectator || GameMode.Spectator)
 
     /**
      * checks if player is in Adventure
      * @param {Player} player The player to check
      * @returns {boolean}
-     * @example
-     * import { world } from "@minecraft/server"
-     * import { PlayerUtils } from "./utilities/player-utilities";
-     * 
-     * const player = world.getPlayers()[0];
-     * if (PlayerUtils.isAdventure(player)) {
-     *  world.sendMessage(`${player.name} is in Adventure!`)
-     * };
+     * @example 
+      import { world } from "@minecraft/server"
+      import { PlayerUtils } from "./utilities/player-utilities";
+      
+      world.afterEvents.playerInteractWithBlock.subscribe(event=> {
+        const player = event.player
+        if (PlayerUtils.isAdventure(player)){
+            console.log(`${player.name} is in Adventure`)
+        }
+      })
     */
     static isAdventure = (player) => player.getGameMode() == (GameMode.adventure || GameMode.Adventure)
 
