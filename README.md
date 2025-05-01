@@ -17,7 +17,7 @@ A collection of utility modules to simplify development with Minecraft Bedrock's
 ### Entities
 **EntityHelper.js**
 - `getCardinalDirection(entity)` - Returns compass direction
-- ~~ `move(entity, location)` - Moves entity smoothly~~
+- `move(entity, location)` - ~~Moves entity smoothly~~
 - `isUnderground(entity)` - Checks underground status
 - `getPlayerDevice(player)` - Detects player's platform
 
