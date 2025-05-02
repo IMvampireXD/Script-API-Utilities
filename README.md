@@ -6,7 +6,7 @@
 
 # Minecraft Bedrock Script API Utilities
 
-A library of useful functions for helping with creating scripts in Minecraft Bedrock to make Script API **easier.**
+A library of useful functions for simplifying development with Minecraft Bedrock's Script API.
 
 ## 📁 List of functions:
 
@@ -62,9 +62,6 @@ A library of useful functions for helping with creating scripts in Minecraft Bed
 
 # Usage Example
 
-Download the utlities folder.
-And import the functions as your need, in your script, Example:
-
 ```js
 import { Random } from "./utilities/math-utilities.js";
 import { InventoryUtils } from "./utilities/inventory-utilities.js";
@@ -89,3 +86,10 @@ CustomEvents.detectPlayerDropItem((event) => {
   world.sendMessage(` ${item.typeId} was dropped by ${player.name} !`);
 });
 ```
+
+# Installation
+1. Clone or download the utilities folder.
+2. Import required functions in your scripts, as your need.
+
+# Contributing
+Pull requests and issue reports are welcome. Maintain consistent style with existing code.
