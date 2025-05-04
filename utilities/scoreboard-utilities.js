@@ -10,7 +10,7 @@ export class ScoreboardUtils {
     static setScore(player, objective, value) {
         world.scoreboard.getObjective(objective).setScore(player.scoreboardIdentity, value);
     }
-    
+
     /**
      * @param {Player} player
      */
@@ -218,10 +218,10 @@ export class CustomScoreboard {
 
         for (const id of dynamicIds) {
             if (!id.startsWith('Name:')) continue;
-    
+
             const identityStart = id.indexOf('{');
             if (identityStart === -1) continue;
-    
+
             let identity;
             try {
                 const identityJson = id.substring(identityStart);
@@ -230,9 +230,9 @@ export class CustomScoreboard {
             } catch {
                 continue;
             }
-    
+
             if (!scoreParticipantIds.has(identity)) continue;
-    
+
             const playerName = world.getDynamicProperty(id);
             if (playerName) {
                 names.push(playerName);
