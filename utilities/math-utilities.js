@@ -94,6 +94,18 @@ class NumberRange {
     }
 
     /**
+     * Returns the median value of the number range.
+     * 
+     * @returns {number} The median of the range.
+     * 
+     * @example
+     * new NumberRange(1,3).getMedian() // returns 2
+     */
+    getMedian() {
+        return (this.min + this.max) / 2;
+    }
+
+    /**
      * Returns the range as a tuple array [min, max].
      * @returns {[number, number]}
      */
