@@ -1,35 +1,132 @@
-import { Player } from "@minecraft/server";
+import { Player, EntityInventoryComponent, ItemStack } from "@minecraft/server";
+import { ItemStackUtils } from "./itemstack-utilities.js";
 
 export class InventoryUtils {
 
     /**
-      * Checks if the player has a specified quantity of a certain item in their inventory.
-      *
-      * @param {Player} player - The player whose inventory is being checked.
-      * @param {string} typeId - The typeId of the item to check for.
-      * @param {number} required - The required quantity of the item.
-      * @returns {boolean} - Returns true if the player has at least the required quantity of the item, false otherwise.
-      * @example
-      * import { world } from "@minecraft/server";
-      * 
-      * const player = world.getPlayers()[0];
-      * const hasDiamonds = isHavingItemQuantity(player, "minecraft:diamond", 5);
-      */
-    static isHavingItemQuantity(player, typeId, required) {
-        const inventoryComponent = player.getComponent("inventory");
-        const container = inventoryComponent.container;
-        if (container === undefined) {
-            return false;
+     * Get a player's inventory component easily
+     * 
+     * @param {Player} player
+     */
+    static getInventory(player) {
+        return player.getComponent(EntityInventoryComponent.componentId)?.container;
+    }
+
+    /**
+     * Clears player's inventory
+     * @param {Player} player 
+     */
+    static clearInventory(player) {
+        const container = InventoryUtils.getInventory(player);
+        for (let i = 0; i < container.size; i++) {
+            container.setItem(i, undefined);
         }
+    }
+
+    /**
+     * Checks if the player has a specified quantity of a certain item in his inventory.
+     * 
+     * @param {Player} player - The player's whose inventory will be checked
+     * @param {string} typeId - typeId of the item to check for
+     * @param {number} count - The required quantity of the item.
+     * @returns {boolean} - True if the player has the amount of specified item, false otherwise.
+     * 
+     * @example
+     * import { world } from "@minecraft/server";
+     * 
+     * const player = world.getPlayers()[0];
+     * const hasDiamonds = hasItem(player, "minecraft:diamond", 5);
+     */
+    static hasItem(player, typeId, count = 1) {
+        const inv = InventoryUtils.getInventory(player);
+        if (!inv || inv == undefined) return false;
         let total = 0;
-        for (let slotId = 0; slotId < container.size; slotId++) {
-            const itemStack = container.getItem(slotId);
-            if (itemStack === undefined || itemStack.typeId !== typeId) {
-                continue;
+        for (let i = 0; i < inv.size; i++) {
+            const item = inv.getItem(i);
+            if (item == undefined || item.typeId !== typeId) continue;
+            if (item && item.typeId === typeId) {
+                total += item.amount;
+                if (total >= count) return true;
             }
-            total += itemStack.amount;
         }
-        return total >= required;
+        return false;
+    }
+
+    /**
+     * Adds an item to player's inventory
+     * 
+     * @param {Player} player - Player
+     * @param {string} itemId - typeId of the Item
+     * @param {number} amount - Amount of the item to add
+     * @param {Object} [data={}] - Additional item data (Enchantments, nameTag, Lore) (No properties will be applied if data is left blank)
+     * @param {string} [data.nameTag] - A custom nameTag to apply to the item.
+     * @param {string[]} [data.lore] - An array of lore lines to apply to the item.
+     * @param {Object.<string, number>} [data.enchantments] - An object of Enchantments to apply.
+     * 
+     * @example
+     * addItem(player, "minecraft:apple", 3);
+     *
+     * @example
+     * addItem(player, "minecraft:diamond_sword", 1, {
+     *   nameTag: "sword",
+     *   lore: ["loreLine", "newLore"],
+     *   enchantments: {
+     *     "minecraft:sharpness": 5,
+     *     "minecraft:unbreaking": 3
+     *   }
+     * });
+     */
+    static addItem(player, itemId, amount = 1, data = {}) {
+        const container = InventoryUtils.getInventory(player);
+        const itemStack = new ItemStack(itemId, amount);
+        // Apply custom data if provided
+        if (data.nameTag) itemStack.nameTag = data.nameTag;
+        if (data.lore) itemStack.setLore(data.lore);
+        if (data.enchantments) {
+            ItemStackUtils.applyEnchantments(itemStack, data.enchantments);
+        }
+        container.addItem(itemStack);
+    }
+
+    /**
+     * Removes a specific amount of items from the player's inventory.
+     *
+     * @param {Player} player - The player.
+     * @param {string} itemId - The typeId of the item to remove.
+     * @param {number} [amount=0] - The number of items to remove. (Clears all if no amount provided)
+     *
+     * @example
+     * // Remove 5 apples
+     * removeItem(player, "minecraft:apple", 5);
+     *
+     * @example
+     * // Clear all apples
+     * removeItem(player, "minecraft:apple");
+     */
+    static removeItem(player, itemId, amount = 0) {
+        const container = InventoryUtils.getInventory(player);
+        let remaining = amount;
+
+        for (let i = 0; i < container.size; i++) {
+            const item = container.getItem(i);
+            if (item && item.typeId === itemId) {
+                if (amount === 0) {
+                    container.setItem(i, undefined);
+                } else {
+                    const removeCount = Math.min(item.amount, remaining);
+                    item.amount -= removeCount;
+                    remaining -= removeCount;
+
+                    if (item.amount <= 0) {
+                        container.setItem(i, undefined);
+                    } else {
+                        container.setItem(i, item);
+                    }
+
+                    if (remaining <= 0) break;
+                }
+            }
+        }
     }
 
     /**
