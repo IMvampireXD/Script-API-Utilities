@@ -1,7 +1,7 @@
 import { world, system, Player } from "@minecraft/server"
 
 export class CustomEvents {
-    
+
     /**
       * Detects when player picks up any item.
       * @param {function({player: player, pickedItem: item})} callBack
@@ -15,7 +15,7 @@ export class CustomEvents {
       * });
       * 
       */
-    static detectPlayerPickupItem(callBack) {
+    static onItemPickup(callBack) {
         world.beforeEvents.entityRemove.subscribe(e => {
             const { removedEntity: entity } = e;
             const item = entity.getComponent("item")?.itemStack
@@ -53,9 +53,9 @@ export class CustomEvents {
       * });
       * 
       */
-    static detectPlayerDropItem(callBack) {
+    static onItemDrop(callBack) {
         world.afterEvents.entitySpawn.subscribe((event) => {
-            const {entity} = event
+            const { entity } = event
             if (entity.typeId !== "minecraft:item") return;
             const closestPlayers = entity.dimension.getEntities({
                 type: "minecraft:player",
@@ -63,7 +63,7 @@ export class CustomEvents {
                 maxDistance: 2,
             });
             if (closestPlayers.length == 0) return;
-            const player = closestPlayers.find(p=> 
+            const player = closestPlayers.find(p =>
                 p.getRotation().x === entity.getRotation().x &&
                 p.getRotation().y === entity.getRotation().y
             );
@@ -73,7 +73,7 @@ export class CustomEvents {
             callBack({ player: player, droppedItem: item });
         })
     }
-    
+
     /**
       * Detects when a player shoots a projectile that hits another entity.
       * 
@@ -88,7 +88,7 @@ export class CustomEvents {
       * });
       * 
       */
-    static detectPlayerShootsEvent(callBack, whom = null) {
+    static onProjectileHit(callBack, whom = null) {
         world.afterEvents.entitySpawn.subscribe(({ entity }) => {
             if (entity.typeId !== 'minecraft:arrow' && entity.typeId !== 'minecraft:trident')
                 return;
@@ -112,7 +112,7 @@ export class CustomEvents {
             });
         });
     }
-    
+
     /**
      * Detects when a player does a double jump.
      * 
@@ -127,7 +127,7 @@ export class CustomEvents {
      * });
      * 
      */
-    static detectDoubleJumpEvent(callBack) {
+    static onDoubleJump(callBack) {
         system.runInterval(() => {
             world.getAllPlayers().forEach(player => {
                 // Initialize jump tracking if not set
