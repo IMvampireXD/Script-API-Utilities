@@ -3,6 +3,25 @@ import { Dimension, ItemStack, system, world } from "@minecraft/server";
 export class DimensionUtils {
 
     /**
+     * Run multiple commands at once.
+     * 
+     * @param {Dimension} dimension - The dimension to run commands.
+     * @param {string[]} commands - An array of command strings to execute.
+     * 
+     * @example
+     * DimensionUtils.runCommands(player.dimension, [
+     *       `say Giving apple to player!`,
+     *       `give @s apple 1`,
+     *       `say Done!`
+     *   ])
+     */
+    static runCommands(dimension, commands) {
+        for (const cmd of commands) {
+            dimension.runCommand(cmd);
+        }
+    }
+
+    /**
       * Spawn an item in a location.
       * 
       * @param {Dimension} dimension - Dimension to spawn the item in
@@ -110,7 +129,7 @@ export class DimensionUtils {
       *   player.sendMessage(`Youre inside: ${biomeId}`)
       * }
       */
-    static async getBiome(location,dimension) {
+    static async getBiome(location, dimension) {
         //Safeguard if using stable api when importing BiomeTypes
         let biomeTypes = this.getBiome.biomeTypes;
         if (!biomeTypes) {
@@ -123,12 +142,12 @@ export class DimensionUtils {
 
         //the rest of the code
         if (!(dimension instanceof Dimension))
-        if (typeof dimension == "string")
-            dimension = world.getDimension(dimension)
-        else throw Error("dimension is invalid.")
+            if (typeof dimension == "string")
+                dimension = world.getDimension(dimension)
+            else throw Error("dimension is invalid.")
         const allBiome = biomeTypes.getAll()
         const height = dimension.heightRange;
-        const distance = (a,b) => {
+        const distance = (a, b) => {
             const xyz = {
                 x: a.x - b.x,
                 y: a.y - b.y,
@@ -137,60 +156,60 @@ export class DimensionUtils {
             return Math.sqrt(xyz.x ** 2 + xyz.y ** 2 + xyz.z ** 2)
         }
         let priority = 0;
-        return new Promise((resolve)=>{
-            system.runJob((function *() {
+        return new Promise((resolve) => {
+            system.runJob((function* () {
                 let biomeFound = []
                 let baseBiome = [];
-                for (let i=0; i<allBiome.length; i++) {
+                for (let i = 0; i < allBiome.length; i++) {
                     let bLoc1 = dimension.findClosestBiome({
                         x: location.x,
-                        y: location.y+32,
+                        y: location.y + 32,
                         z: location.z
-                    },allBiome[i],{
+                    }, allBiome[i], {
                         boundingSize: {
                             x: 64,
                             y: 64,
                             z: 64
                         }
                     })
-    
+
                     let bLoc2 = dimension.findClosestBiome({
                         x: location.x,
                         y: height.max,
                         z: location.z
-                    },allBiome[i],{
+                    }, allBiome[i], {
                         boundingSize: {
                             x: 64,
                             y: 64,
                             z: 64
                         }
                     })
-    
+
                     if (bLoc2)
-                        baseBiome.push([allBiome[i].id,distance(bLoc2,location)])
-                    
-                    if (!bLoc1) { yield; continue;}
+                        baseBiome.push([allBiome[i].id, distance(bLoc2, location)])
+
+                    if (!bLoc1) { yield; continue; }
                     const bLoc1Dist = distance({
                         x: bLoc1.x,
                         y: 0,
                         z: bLoc1.z
-                    },{
+                    }, {
                         x: location.x,
                         y: 0,
                         z: location.z
                     })
-                    
+
                     if (!priority && !bLoc2) {
                         priority = 1;
                         biomeFound = []
                     }
                     if (priority ? !bLoc2 : bLoc2) {
-                        biomeFound.push([allBiome[i].id,bLoc1Dist])
+                        biomeFound.push([allBiome[i].id, bLoc1Dist])
                     }
                     yield
                 }
-                baseBiome = baseBiome.sort((a,b)=>a[1]-b[1])[0];
-                const biome = biomeFound.sort((a,b)=>a[1]-b[1])[0];
+                baseBiome = baseBiome.sort((a, b) => a[1] - b[1])[0];
+                const biome = biomeFound.sort((a, b) => a[1] - b[1])[0];
                 return resolve(biome[1] > 50 ? baseBiome : biome[0])
             })())
         })
