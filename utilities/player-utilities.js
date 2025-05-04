@@ -1,6 +1,248 @@
-import { GameMode, Player } from "@minecraft/server";
+import { Player, Entity, Block, world, EquipmentSlot, GameMode, ItemStack } from "@minecraft/server";
+
+
+/**
+ * Checks if player is in creative mode.
+ * @param {Player} player The player to check
+ * @returns {boolean}
+ * @example 
+ * import { world } from "@minecraft/server"
+ * import { PlayerUtils } from "./utilities/player-utilities";
+ * 
+ * const player = world.getPlayers()[0];
+ * if (PlayerUtils.isCreative(player)) {
+ *  world.sendMessage(`${player.name} is in creative!`)
+ * };
+ */
+export const isCreative = (player) => player.getGameMode() === (GameMode.creative || GameMode.Creative)
+
+/**
+ * Checks if player is in survival mode.
+ * @param {Player} player The player to check
+ * @returns {boolean}
+ * @example 
+ * import { world } from "@minecraft/server"
+ * import { PlayerUtils } from "./utilities/player-utilities";
+ * 
+ * const player = world.getPlayers()[0];
+ * if (PlayerUtils.isSurvival(player)) {
+ *  world.sendMessage(`${player.name} is in survival!`)
+ * };
+ */
+export const isSurvival = (player) => player.getGameMode() === (GameMode.survival || GameMode.Survival)
+
+/**
+ * Checks if player is in Spectator mode.
+ * @param {Player} player The player to check
+ * @returns {boolean}
+ * @example 
+ * import { world } from "@minecraft/server"
+ * import { PlayerUtils } from "./utilities/player-utilities";
+ * 
+ * const player = world.getPlayers()[0];
+ * if (PlayerUtils.isSpectator(player)) {
+ *  world.sendMessage(`${player.name} is in Spectator!`)
+ * };
+ */
+export const isSpectator = (player) => player.getGameMode() === (GameMode.spectator || GameMode.Spectator)
+
+/**
+ * Checks if player is in Adventure mode.
+ * @param {Player} player The player to check
+ * @returns {boolean}
+ * @example 
+ * import { world } from "@minecraft/server"
+ * import { PlayerUtils } from "./utilities/player-utilities";
+ * 
+ * const player = world.getPlayers()[0];
+ * if (PlayerUtils.isAdventure(player)) {
+ *  world.sendMessage(`${player.name} is in Adventure!`)
+ * };
+ */
+export const isAdventure = (player) => player.getGameMode() === (GameMode.adventure || GameMode.Adventure)
+
 
 export class PlayerUtils {
+
+    /**
+     * @author NaKer
+     * Allows to use applyImpulse on player.
+     * @param {Vector3} vector
+     * @param {Player} player
+     */
+    static applyImpulse(player, vector) {
+        player.applyKnockback(
+            { x: vector.x, z: vector.z },
+            vector.y < 0.0 ? 0.5 * vector.y : vector.y
+        );
+    };
+
+    /**
+     * Gets the distance between player from ground.
+     * 
+     * @param {Player} player 
+     * @returns {number}
+     */
+    static distanceToGround(player) {
+        const playerPos = { x: player.location.x, y: player.location.y - 1, z: player.location.z };
+        const raycastResult = player.dimension.getBlockFromRay(playerPos, { x: 0, y: -1, z: 0 }, { maxDistance: 50 });
+        const distanceToGround = playerPos.y - raycastResult.block?.location.y;
+        return !raycastResult ? 50 : distanceToGround;
+    }
+
+    /**
+     * Gets the item in the player's Mainhand.
+     * 
+     * @param {Player} player
+     * @returns {ItemStack | undefined}
+     */
+    static getMainhand(player) {
+        return player?.getComponent('equippable')?.getEquipment(EquipmentSlot.Mainhand);
+    };
+
+    /**
+     * Gets the item in the player's Offhand.
+     * 
+     * @param {Player} player
+     * @returns {ItemStack | undefined}
+     */
+    static getOffhand(player) {
+        return player?.getComponent('equippable')?.getEquipment(EquipmentSlot.Offhand);
+    };
+
+    /**
+     * Gets the pitch of Player (X Rotation)
+     * @param {Player} player
+     */
+    static pitch(player) {
+        return player?.getRotation().x;
+    }
+
+    /** 
+     * Gets the yaw of Player (Y Rotation)
+     * @param {Player} player
+     */
+    static yaw(player) {
+        return player.getRotation().y;
+    }
+
+    /**
+     * Gets player current health.
+     * @param {Player} player
+     */
+    static getCurrentHealth(player) {
+        return player?.getComponent('minecraft:health').current;
+    }
+
+    /**
+     * Checks if the player is moving or not.
+     * @param {Player} player
+     * @returns {boolean} 
+     */
+    static isMoving(player) {
+        const { x, y, z } = player?.getVelocity();
+        const speed = Math.hypot(x, y, z);
+        return speed > 0;
+    }
+
+    /**
+     * Teleport a player to the target player by his name.
+     * 
+     * @param {Player} player - The player who wants to teleport .
+     * @param {string} targetName - The name of the target player, where he will be teleported. 
+     */
+    static teleportToPlayer(player, targetName) {
+
+        /**@type {Player} */
+        const target = world.getPlayers({ name: targetName })[0];
+
+        try {
+            if (target.isValid) {
+                player.teleport(target.location, { dimension: target.dimension });
+            } else console.warn(`The target player is not valid.`);
+
+        } catch (e) {
+            console.warn(`Failed to teleport player:`, e);
+        }
+    }
+
+    /** 
+     * @param {Player} player 
+     * @returns {Block} Block
+     * @description Get the block the player is looking at.
+     * 
+     */
+    static getBlockLookingAt(player, maxDistance) {
+        try {
+            const rayBlock = player.getBlockFromViewDirection({ maxDistance: maxDistance }).block;
+            if (rayBlock) {
+                return rayBlock;
+            }
+        } catch (e) { }
+    };
+
+    /**
+     * @param {Player} player 
+     * @returns {Entity} Entity
+     * @description Gets entity the player is looking at
+     */
+    static getEntityLookingAt(player, maxDistance) {
+        try {
+            const rayEntity = player.getEntitiesFromViewDirection({ maxDistance: maxDistance })[0].entity
+            if (rayEntity) {
+                return rayEntity;
+            }
+        } catch (e) { }
+    };
+
+    /**
+     * Sets an item into a specific equipment slot.
+     * @param {Player} target The player
+     * @param {EquipmentSlot} slot The slot to place the item in
+     * @param {ItemStack} itemStack The item to set
+     */
+    static setEquipmentSlot(target, slot, itemStack) {
+        target?.getComponent("equippable")?.setEquipment(slot, itemStack);
+    }
+
+    /**
+     * Gets an item from a specific equipment slot.
+     * @param {Player} target The player to get equipment from
+     * @param {EquipmentSlot} slot The slot to access
+     * @returns {ItemStack | undefined}
+     */
+    static getEquipmentSlot(target, slot) {
+        target?.getComponent("equippable")?.getEquipment(slot);
+    }
+
+    /**
+     * Checks if player is looking at a specefied location.
+     * 
+     * @param {Player} player
+     * @param {Vector3} position
+     * @param {number} maxAngle
+     * @returns {boolean} True if player is looking at the specified position.
+     */
+    static isPlayerLookingAt(player, position, maxAngle = 15) {
+        const dir = {
+            x: position.x - player.location.x,
+            y: position.y - player.location.y,
+            z: position.z - player.location.z
+        };
+        const length = Math.sqrt(dir.x * dir.x + dir.y * dir.y + dir.z * dir.z);
+        if (length === 0) return true;
+        const normDir = {
+            x: dir.x / length,
+            y: dir.y / length,
+            z: dir.z / length
+        };
+        const viewDir = player.getViewDirection();
+        const dot = normDir.x * viewDir.x + normDir.y * viewDir.y + normDir.z * viewDir.z;
+        const angle = Math.acos(dot) * (180 / Math.PI);
+
+        return angle <= maxAngle;
+    }
+
     /**
      * Gets the platform/device the player is using.
      * @author Vyse
@@ -8,31 +250,30 @@ export class PlayerUtils {
      * @returns {string}
      * @example
      * import { world } from "@minecraft/server"
-     * import { PlayerUtils } from "./utilities/player-utilities";
      * 
      * const player = world.getPlayers()[0];
-     * PlayerUtils.getDevice(player);
-    */
+     * getDevice(player);
+     */
     static getDevice(player) {
         const { platformType, memoryTier, maxRenderDistance } = player.clientSystemInfo;
         if (maxRenderDistance < 6 || maxRenderDistance > 96 || platformType === null) return "Bot";
         if (platformType === "Desktop") return "Windows";
         if (platformType === "Mobile") {
-      return maxRenderDistance > 16 ? "Android" : "iOS";
+            return maxRenderDistance > 16 ? "Android" : "iOS";
         }
         if (platformType === "Console") {
-      if (memoryTier === 3 && maxRenderDistance === 12) return "Nintendo Switch";
-      if (memoryTier === 4 && maxRenderDistance === 36) return "Xbox Series S";
-      if (memoryTier === 5 && maxRenderDistance === 36) return "Xbox Series X";
-      if (memoryTier === 4) {
-        if (player.name.match(/[_-]/g) && maxRenderDistance === 16) return "PS4";
-        if (maxRenderDistance === 16) return "Xbox One";
-        if (maxRenderDistance === 18) return "PS4 Pro";
-        if (maxRenderDistance === 28) return "PS5";
-      }
+            if (memoryTier === 3 && maxRenderDistance === 12) return "Nintendo Switch";
+            if (memoryTier === 4 && maxRenderDistance === 36) return "Xbox Series S";
+            if (memoryTier === 5 && maxRenderDistance === 36) return "Xbox Series X";
+            if (memoryTier === 4) {
+                if (player.name.match(/[_-]/g) && maxRenderDistance === 16) return "PS4";
+                if (maxRenderDistance === 16) return "Xbox One";
+                if (maxRenderDistance === 18) return "PS4 Pro";
+                if (maxRenderDistance === 28) return "PS5";
+            }
         }
         return "Unknown Device";
-    };
+    }
 
 
     /**
@@ -43,23 +284,22 @@ export class PlayerUtils {
      * @returns {boolean}
      * @example
      * import { world } from "@minecraft/server"
-     * import { PlayerUtils } from "./utilities/player-utilities";
      * 
      * const player = world.getPlayers()[0];
-     * PlayerUtils.isUnderground(player);
-    */
+     * isUnderground(player);
+     */
     static isUnderground(player) {
         if (player.dimension.heightRange.min > player.location.y) return true;
         if (player.dimension.heightRange.max < player.location.y) return false;
-    
+
         let block = player.dimension.getTopmostBlock(player.location)
         if (player.location.y >= block.y) return false
         while (!block.isSolid && block.y > player.dimension.heightRange.min) {
-          if (player.location.y >= block.y) return false
-          block = block.below()
-        };
+            if (player.location.y >= block.y) return false
+            block = block.below()
+        }
         return true
-    };
+    }
 
     /**
      * @author Eon
@@ -67,11 +307,10 @@ export class PlayerUtils {
      * @returns {boolean} 
      * @example
      * import { world } from "@minecraft/server"
-     * import { PlayerUtils } from "./utilities/player-utilities";
      * 
      * const player = world.getPlayers()[0];
-     * PlayerUtils.isPlayerOnSurface(player);
-    */
+     * isPlayerOnSurface(player);
+     */
     static isPlayerOnSurface(player) {
         const location = player.location;
         const blockBelow = player.dimension.getBlock(new Vec3(player.location.x, player.location.y, player.location.z).subtract({ x: 0, y: 1, z: 0 }));
@@ -85,12 +324,12 @@ export class PlayerUtils {
                 const block = player.dimension.getBlock(new Vec3(location.x, y, location.z));
                 if (block && block.typeId !== "minecraft:air") {
                     return false;
-                };
-            };
+                }
+            }
             return true;
-        };
+        }
         return false;
-    };
+    }
 
     /**
      * Get the Cardinal direction of the player
@@ -110,6 +349,7 @@ export class PlayerUtils {
         else return 'west';
     };
 
+
     /**
      * Checks if a player is riding a specific entity type.
      * @param {Player} player Player to check if riding an entity
@@ -117,13 +357,12 @@ export class PlayerUtils {
      * @returns {boolean}
      * @example
      * import { world } from "@minecraft/server"
-     * import { PlayerUtils } from "./utilities/player-utilities";
      * 
      * const player = world.getPlayers()[0];
-     * const isRidingPlayer = PlayerUtils.isRidingEntity(player, "minecraft:horse");
+     * const isRidingPlayer = isRidingEntity(player, "minecraft:horse");
      * @throws If player is not a Player.
      * @throws if Player doesn't have a `riding` component
-    */
+     */
     static isRidingEntity(player, entityType) {
         // Validate the player object
         if (!player || typeof player.getComponent !== 'function') {
@@ -134,192 +373,12 @@ export class PlayerUtils {
         // Validate the riding component and entityRidingOn
         if (!riding) {
             throw new Error('Player does not have a `riding` component.');
-        };
+        }
         if (!riding.entityRidingOn) {
             throw new Error('Player is not riding any entity.');
-        };
+        }
         // Compare the typeId of the entity being ridden with the provided entityType
         return riding.entityRidingOn.typeId === entityType;
-    };
-
-    /**
-     * Checks if the player has a specified quantity of a certain item in their inventory.
-     *
-     * @param {Player} player - The player whose inventory is being checked.
-     * @param {string} typeId - The typeId of the item to check for.
-     * @param {number} required - The required quantity of the item.
-     * @returns {boolean} - Returns true if the player has at least the required quantity of the item, false otherwise.
-     * @example
-     * import { world } from "@minecraft/server";
-     * import { PlayerUtils } from "./utilities/player-utilities";
-     * 
-     * const player = world.getPlayers()[0];
-     * const hasDiamonds = PlayerUtils.isHavingItemQuantity(player, "minecraft:diamond", 5);
-    */
-    static isHavingItemQuantity(player, typeId, required) {
-        const inventoryComponent = player.getComponent("inventory");
-        const container = inventoryComponent.container;
-        if (container === undefined) {
-            return false;
-        }
-        let total = 0;
-        for (let slotId = 0; slotId < container.size; slotId++) {
-            const itemStack = container.getItem(slotId);
-            if (itemStack === undefined || itemStack.typeId !== typeId) {
-                continue;
-            }
-            total += itemStack.amount;
-        }
-        return total >= required;
     }
-
-
-    /**
-     * @param {Player} player
-     * @param {string} effect
-     * @param {seconds} duration
-     * @param {boolean} hasParticles
-     * @param {number} level
-     * @author Gamer99
-     * @description Adds effects to the player
-     * @example
-     * import { world } from "@minecraft/server";
-     * import { PlayerUtils } from "./utilities/player-utilities";
-     * 
-       if (item.typeId === "minecraft:stick" ) {
-            PlayerUtils.addEffect(player,"speed",20,true,3)
-       }
-    */
-    static addEffect(entityType, effect, duration, hasParticles, level) {// func1
-        entityType.addEffect(effect, duration * 20, { showParticles: hasParticles, amplifier: level -= 1 })
-        // this is the function i created 
-    };
-    /**
-     * 
-     * @param {Player} player 
-     * @param {ItemStack} item 
-     * @param {String|Number} Slot 
-     * @readonly @returns typeId
-     * @author Gamer99
-     * @description gets the item ID in the slot specified 
-    
-     * @example
-     * import { world } from "@minecraft/server";
-     * import { PlayerUtils } from "./utilities/player-utilities";
-     * 
-     *    if (PlayerUtils.Getitem(player,"hand") === "minecraft:stick") {
-            console.warn("yes");
-        };
-    */
-    static Getitem(player, Slot) {//func2
-        const inv = player.getComponent("inventory").container
-        const equipment = player.getComponent("equippable")
-        if (typeof Slot === "number") {
-            const item = inv.getItem(Slot);
-            return item?.typeId
-        }
-
-        switch (Slot) {
-            case "hand":
-                return equipment.getEquipment("Mainhand")?.typeId
-            case "offhand":
-                return equipment.getEquipment("Offhand")?.typeId
-            case "head":
-                return equipment.getEquipment("Head")?.typeId
-            case "chest":
-                return equipment.getEquipment("Chest")?.typeId
-            case "legs":
-                return equipment.getEquipment("Legs")?.typeId
-            case "feet":
-                return equipment.getEquipment("Feet")?.typeId
-        }
-    };
-    /**
-     * 
-     * @param {Player} player 
-     * @returns Entity ID
-     * @author Gamer99
-     * @description Gets The ID of the entity the player is looking at 
-     * @example
-     * import { world } from "@minecraft/server"
-     * import { PlayerUtils } from "./utilities/player-utilities";
-     * 
-       if (item.typeId === "minecraft:stick" && PlayerUtils.getViewEntity(player) === "minecraft:cow") {
-           //code 
-       }
-    })
-    */
-    static getViewEntity(player) {//func3
-        for (const entity of player.getEntitiesFromViewDirection().map(entity => entity.entity)) {
-            return entity
-        }
-    };
-    /**
-     * Checks if player is in Creative
-     * @param {Player} player The player to check
-     * @returns {boolean}
-     * @example 
-      import { world } from "@minecraft/server"
-      import { PlayerUtils } from "./utilities/player-utilities";
-      
-      world.afterEvents.playerInteractWithBlock.subscribe(event=> {
-         const player = event.player
-         if (PlayerUtils.isCreative(player)){
-             console.log("Player is in Creative")
-         }
-      })
-    */
-    static isCreative = (player) => player.getGameMode() == (GameMode.creative || GameMode.Creative)
-
-    /**
-     * Checks if player is in Survival
-     * @param {Player} player The player to check
-     * @returns {boolean}
-     * @example 
-      import { world } from "@minecraft/server"
-      import { PlayerUtils } from "./utilities/player-utilities";
-      
-      world.afterEvents.playerInteractWithBlock.subscribe(event=> {
-        const player = event.player
-        if (PlayerUtils.isSurvival(player)){
-            console.log("Player is in Survival")
-        }
-      })
-    */
-    static isSurvival = (player) => player.getGameMode() == (GameMode.survival || GameMode.Survival)
-
-    /**
-     * checks if player is in Spectator
-     * @param {Player} player The player to check
-     * @returns {boolean}
-     * @example 
-      import { world } from "@minecraft/server"
-      import { PlayerUtils } from "./utilities/player-utilities";
-      
-      world.afterEvents.playerInteractWithBlock.subscribe(event=> {
-        const player = event.player
-        if (PlayerUtils.isSpectator(player)){
-            console.log("Player is in Spectator")
-        }
-      })
-    */
-    static isSpectator = (player) => player.getGameMode() == (GameMode.spectator || GameMode.Spectator)
-
-    /**
-     * checks if player is in Adventure
-     * @param {Player} player The player to check
-     * @returns {boolean}
-     * @example 
-      import { world } from "@minecraft/server"
-      import { PlayerUtils } from "./utilities/player-utilities";
-      
-      world.afterEvents.playerInteractWithBlock.subscribe(event=> {
-        const player = event.player
-        if (PlayerUtils.isAdventure(player)){
-            console.log(`${player.name} is in Adventure`)
-        }
-      })
-    */
-    static isAdventure = (player) => player.getGameMode() == (GameMode.adventure || GameMode.Adventure)
 
 }
