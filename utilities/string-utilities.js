@@ -1,3 +1,4 @@
+
 export class StringUtils {
     /**
      * Converts a string to a typeId format.
@@ -63,9 +64,9 @@ export class StringUtils {
       * @returns {string} - Roman number string.
       */
     static intToRoman(int, toLowerCase = false) {
-        const v = [1000,900,500,400,100,90,50,40,10,9,5,4,1],
-            s = ["M","CM","D","CD","C","XC","L","XL","X","IX","V","IV","I"];
-            let r = "";
+        const v = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1],
+            s = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"];
+        let r = "";
         for (let i = 0; i < v.length; i++)
             while (int >= v[i]) r += s[i], int -= v[i];
         return toLowerCase ? r.toLowerCase() : r;
