@@ -1,9 +1,76 @@
+import { VECTOR3_DOWN, VECTOR3_NORTH, Vector3Builder } from "./Vector3Utils.js";
+import { Entity, Player } from "@minecraft/server";
 
 
-export class EntityUtils{
+export class EntityUtils {
+
+    /**
+     * Checks if this entity is a player.
+     * @param {Entity} entity
+     * @returns {boolean}
+     */
+    static isPlayer(entity) {
+        return entity?.typeId === "minecraft:player";
+    };
+
+    /**
+     * Shoots a projectile from a entity's view direction.
+     * @param {string} projectile The projectile typeId to shoot (example, "minecraft:arrow")
+     * @param {number} power The speed of the projectile
+     * @param {Player} source The entity to shoot the projectile from
+     * @returns {Entity} The projectile
+     */
+    static shootProjectile(projectile, power, source) {
+        const headLoc = source.getHeadLocation();
+        const viewVector = source.getViewDirection();
+        const direction = {
+            x: headLoc.x + viewVector.x,
+            y: headLoc.y + viewVector.y + viewVector.y * 0.4,
+            z: headLoc.z + viewVector.z,
+        };
+        const vel = { x: viewVector.x * power, y: viewVector.y * power, z: viewVector.z * power };
+        const entity = source.dimension.spawnEntity(projectile, direction);
+        entity.getComponent("projectile").shoot(vel);
+
+        return entity;
+    };
+
+    /**
+     * @author frostice482
+     * 
+     * Gets entity hitbox size
+     * @param {Entity} entity Entity
+     * @param {number} maxWidth Maximum width
+     * @param {number} maxHeight Maximum height
+     * @returns {Vector3} Hitbox size
+     */
+    static getEntityHitboxSize(entity, maxWidth = 4, maxHeight = 4) {
+        const dim = entity.dimension
+        const loc = entity.location
+
+        // vertical
+        loc.y += maxHeight
+        const heightRes =
+            dim
+                .getEntitiesFromRay(loc, VECTOR3_DOWN, { maxDistance: maxHeight })
+                .find(v => v.entity === entity)?.distance ?? 0
+        const height = maxHeight - heightRes
+
+        // horizontal
+        loc.y -= (maxHeight + heightRes) / 2
+        loc.z -= maxWidth
+        const widthRes =
+            dim
+                .getEntitiesFromRay(loc, VECTOR3_NORTH, { maxDistance: maxWidth })
+                .find(v => v.entity === entity)?.distance ?? 0
+        const width = (maxWidth - widthRes) * 2
+
+        return Vector3Builder(width, height, width)
+    }
+
     /**
      * Move an entity to a location using applyKnockback or applyImpulse
-
+    
      * @author Coddy
      * @param {Entity} entity The entity to move towards a location
      * @param {Vector3} targetPos The location to move the entity to
@@ -17,10 +84,9 @@ export class EntityUtils{
      * player.applyKnockback(values.x, values.z, values.strength, values.y);
      * @example
      * import { world } from "@minecraft/server"
-     * import { EntityUtils } from "./utilities/entity-utilities";
      * 
      * const entity = world.getDimension("overworld").getEntities({ excludeTypes: ["minecraft:player"]})[0];
-     * const values = EntityUtils.moveToLocation(entity, { x: 10, y: 200, z: 5 }, 0.5);
+     * const values = moveToLocation(entity, { x: 10, y: 200, z: 5 }, 0.5);
      * entity.applyKnockback(values.x, values.z, values.strength, values.y);
     */
     static moveToLocation(entity, targetPos, speed) {
@@ -30,53 +96,10 @@ export class EntityUtils{
         if (!mag) return null;
         const x = (dx / mag) * speed, y = (dy / mag) * speed, z = (dz / mag) * speed;
         if (entity.typeId === 'minecraft:player') {
-          const hMag = Math.sqrt(x * x + z * z);
-          return { x: x / hMag, z: z / hMag, strength: hMag, y };
+            const hMag = Math.sqrt(x * x + z * z);
+            return { x: x / hMag, z: z / hMag, strength: hMag, y };
         }
         return { x, y, z };
     }
 
-    /**
-     * Function to return boolean whether the player is underground or not
-     * checks if player is in underground
-     * @author Serty
-     * @param {Player} player The player to test if they are underground
-     * @returns {boolean}
-     * @example
-     * import { world } from "@minecraft/server"
-     * import { EntityUtils } from "./utilities/entity-utilities";
-     * 
-     * const player = world.getPlayers()[0];
-     * EntityUtils.isUnderground(player);
-    */
-    static isUnderground(entity) {
-        if (entity.dimension.heightRange.min > entity.location.y) return true;
-        if (entity.dimension.heightRange.max < entity.location.y) return false;
-    
-        let block = entity.dimension.getTopmostBlock(player.location)
-        if (entity.location.y >= block.y) return false
-        while (!block.isSolid && block.y > entity.dimension.heightRange.min) {
-          if (entity.location.y >= block.y) return false
-          block = block.below()
-        }
-        return true
-    }
-
-    /**
-     * Get the Cardinal direction of the entity
-     * @author GST378
-     * @author finnafinest_
-     * @param {entity} entity The entity to get the Cardinal direction of
-     * @returns {"up"|"down"|"north"|"east"|"south"|"west"}
-    */
-    static getCardinalDirection(entity) {
-        const yaw = entity.getRotation().y;
-        const pitch = entity.getRotation().x;
-        if (pitch > 85) return 'down';
-        if (pitch < -85) return 'up';
-        if (yaw >= -45 && yaw < 45) return 'north';
-        else if (yaw >= 45 && yaw < 135) return 'east';
-        else if (yaw >= 135 || yaw < -135) return 'south';
-        else return 'west';
-    };
 }
