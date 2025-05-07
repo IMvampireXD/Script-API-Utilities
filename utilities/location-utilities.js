@@ -1,3 +1,5 @@
+import { Dimension } from '@minecraft/server';
+import { Random } from './math-utilities';
 
 export class LocationUtils {
 
@@ -54,4 +56,27 @@ export class LocationUtils {
         return `${Math.floor(location.x)} ${Math.floor(location.y)} ${Math.floor(location.z)}`;
     }
 
+
+    /**
+     * 
+     * @param {Dimension} dimension 
+     * @param {import('@minecraft/server').Vector3} location 
+     * @param {number} radius 
+     * @returns {import('@minecraft/server').Vector3}
+     */
+    static getRandomLocation(dimension, location, radius) {
+        /** @type {import('@minecraft/server').Vector3} */
+        let newPosition = {
+            x: location.x + Random.float(-radius, radius),
+            y: location.y,
+            z: location.z + Random.float(-radius, radius),
+        }
+        const newY = dimension.getTopmostBlock({x: newPosition.x, z: newPosition.z})?.above(1)?.y;
+        if(newY === undefined) {
+            console.error(`dimension.getTopmostBlock() returned undefined in getRandomLocation(). Returned initial location.`);
+            return location;
+        }
+        newPosition.y = newY;
+        return newPosition;
+    }
 }
