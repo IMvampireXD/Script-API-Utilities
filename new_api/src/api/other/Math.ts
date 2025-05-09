@@ -16,7 +16,7 @@ export class Random {
      * @param {number} max - Maximum integer value.
      * @returns {number}
      */
-    static int(min: number, max: number) {
+    static int(min: number, max: number): number {
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
@@ -26,7 +26,7 @@ export class Random {
      * @param {number} max - Maximum float value.
      * @returns {number}
      */
-    static float(min, max) {
+    static float(min: number, max: number): number {
         return Math.random() * (max - min) + min;
     }
 
@@ -35,7 +35,7 @@ export class Random {
      * @param {number} range - The range limit.
      * @returns {number}
      */
-    static range(range) {
+    static range(range: number): number {
         return Math.random() * 2 * range - range;
     }
 
@@ -44,7 +44,7 @@ export class Random {
      * @param {number} chance - A value between 0 and 1 representing the probability.
      * @returns {boolean}
      */
-    static chance(chance) {
+    static chance(chance: number): boolean {
         return Math.random() <= chance;
     }
 
@@ -54,7 +54,7 @@ export class Random {
      * @param {...T} args - Elements to choose from.
      * @returns {T}
      */
-    static get(...args) {
+    static get<T>(...args: T[]): T | undefined {
         return args[this.int(0, args.length - 1)];
     }
 
@@ -64,15 +64,19 @@ export class Random {
      * @param {...{ weight: number, value: T }} chances - Weighted values.
      * @returns {T}
      */
-    static weighted(...chances) {
-        if (chances.length === 1) return chances[0].value;
+    static weighted<T>(...chances: { weight: number; value: T }[]): T | undefined {
+        if (chances.length === 0) return undefined;
+        if (chances.length === 1) return chances[0]!.value;
+
         const totalWeight = chances.reduce((sum, chance) => sum + chance.weight, 0);
+
         for (const chance of chances) {
             if (this.chance(chance.weight / totalWeight)) {
                 return chance.value;
             }
         }
-        return chances[0].value;
+
+        return chances[0]!.value;
     }
 }
 
@@ -81,17 +85,17 @@ export class Random {
  * @author https://github.com/IWantANeko
  * @license MIT
  */
-class NumberRange {
+export class NumberRange {
     /**
      * @param {number} min - The minimum value of the range.
      * @param {number} max - The maximum value of the range.
      */
-    constructor(min, max) {
+    constructor(
         /** @readonly @type {number} */
-        this.min = min;
+        public readonly min: number,
         /** @readonly @type {number} */
-        this.max = max;
-    }
+        public readonly max: number
+    ) {}
 
     /**
      * Returns the median value of the number range.
@@ -101,7 +105,7 @@ class NumberRange {
      * @example
      * new NumberRange(1,3).getMedian() // returns 2
      */
-    getMedian() {
+    getMedian(): number {
         return (this.min + this.max) / 2;
     }
 
@@ -109,7 +113,7 @@ class NumberRange {
      * Returns the range as a tuple array [min, max].
      * @returns {[number, number]}
      */
-    toArray() {
+    toArray(): [number, number] {
         return [this.min, this.max];
     }
 
@@ -118,7 +122,7 @@ class NumberRange {
      * @param {string} [separator=', '] - The separator string.
      * @returns {string}
      */
-    toString(separator = ', ') {
+    toString(separator: string = ', '): string {
         return `${this.min}${separator}${this.max}`;
     }
 
@@ -126,7 +130,7 @@ class NumberRange {
      * Returns a copy of the current range.
      * @returns {NumberRange}
      */
-    copy() {
+    copy(): NumberRange {
         return new NumberRange(this.min, this.max);
     }
 
@@ -135,7 +139,7 @@ class NumberRange {
      * @param {number} value - The number to check.
      * @returns {boolean}
      */
-    isInRange(value) {
+    isInRange(value: number): boolean {
         return value >= this.min && value <= this.max;
     }
 
@@ -145,7 +149,7 @@ class NumberRange {
      * @param {number} value - The number to evaluate.
      * @returns {number}
      */
-    offset(value) {
+    offset(value: number): number {
         return value < this.min ? this.min - value : value > this.max ? value - this.max : 0;
     }
 
@@ -155,7 +159,7 @@ class NumberRange {
      * @param {number} value - The number to clamp.
      * @returns {number}
      */
-    cut(value) {
+    cut(value: number): number {
         return value < this.min ? this.min : value > this.max ? this.max : value;
     }
 }
