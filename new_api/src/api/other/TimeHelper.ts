@@ -38,12 +38,15 @@ export class TimeHelper {
     // ----------------------------
     
     /**
-     * Gets or public sets the time value in ticks.
+     * Gets the time value in ticks.
      */
     public get ticks(): number {
         return this._ticks;
     }
-    
+
+    /**
+     * Sets the time value in ticks.
+     */
     public set ticks(value: number) {
         this._ticks = value;
     }
@@ -55,6 +58,9 @@ export class TimeHelper {
         return this._ticks * TimeHelper.SECONDS_PER_TICK;
     }
     
+    /**
+     * Sets the time value in seconds.
+     */
     public set seconds(value: number) {
         this._ticks = value * TimeHelper.TICKS_PER_SECOND;
     }
@@ -66,6 +72,9 @@ export class TimeHelper {
         return this._ticks / TimeHelper.TICKS_PER_MINUTE;
     }
     
+    /**
+     * Sets the time value in minutes.
+     */
     public set minutes(value: number) {
         this._ticks = value * TimeHelper.TICKS_PER_MINUTE;
     }
@@ -77,6 +86,9 @@ export class TimeHelper {
         return this._ticks / TimeHelper.TICKS_PER_HOUR;
     }
     
+    /**
+     * Sets the time value in hours.
+     */
     public set hours(value: number) {
         this._ticks = value * TimeHelper.TICKS_PER_HOUR;
     }
@@ -88,6 +100,9 @@ export class TimeHelper {
         return this._ticks / TimeHelper.TICKS_PER_DAY;
     }
     
+    /**
+     * Sets the time value in days.
+     */
     public set days(value: number) {
         this._ticks = value * TimeHelper.TICKS_PER_DAY;
     }
