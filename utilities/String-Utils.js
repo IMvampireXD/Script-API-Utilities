@@ -1,4 +1,3 @@
-
 export class StringUtils {
     /**
      * Converts a string to a typeId format.

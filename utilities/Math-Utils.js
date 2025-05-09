@@ -1,6 +1,5 @@
 /**
  * Random Utility Class
- * 
  * @author https://github.com/IWantANeko
  * @license MIT
  * @description set of useful random functions (int, float, range, chance, get, weighted).
