@@ -1,7 +1,7 @@
 /**
- * String Utility Class
+ * String Helper Class
  * 
- * @author https://github.com/IWantANeko, frostice482, Remember M9
+ * @author https://github.com/IWantANeko, frostice482, Remember M9 (Recoded by https://github.com/AloneLs)
  * @license MIT
  * @description Set of useful string manipulation and formatting functions
  */

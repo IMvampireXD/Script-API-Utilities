@@ -1,7 +1,7 @@
 /**
- * Number Range Utility Class
+ * Math Helper Class
  * 
- * @author https://github.com/IWantANeko
+ * @author https://github.com/IWantANeko (Recoded by https://github.com/AloneLs)
  * @license MIT
  * @description Represents a numeric range with utility methods for randomization and calculations.
  */
