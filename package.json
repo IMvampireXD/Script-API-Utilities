@@ -1,0 +1,12 @@
+{
+  "name": "script-api-utilities",
+  "modules": "new_api/src/index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  }
+}
