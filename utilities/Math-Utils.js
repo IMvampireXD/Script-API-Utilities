@@ -1,3 +1,16 @@
+class Methods {
+    /**
+     * @param {number} x - The number that will be modified
+     * @param {number} decimal - The number of decimal places to keep
+     * @example
+     * trunc(5.1617667, 2)  //output: 5.16
+     */
+    static trunc(x, decimal) {
+        let y = 10 ** decimal;
+        return Math.trunc(x * y) / y;
+    }
+}
+
 /**
  * Random Utility Class
  * @author https://github.com/IWantANeko
