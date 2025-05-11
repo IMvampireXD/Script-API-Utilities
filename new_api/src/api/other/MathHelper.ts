@@ -5,7 +5,7 @@
  * @license MIT
  * @description Represents a numeric range with utility methods for randomization and calculations.
  */
-export class NumberRange {
+export class MathHelper {
     /** @readonly @type {number} */
     public readonly min: number;
     /** @readonly @type {number} */
@@ -48,10 +48,10 @@ export class NumberRange {
 
     /**
      * Returns a copy of the current range.
-     * @returns {NumberRange}
+     * @returns {MathHelper}
      */
-    public copy(): NumberRange {
-        return new NumberRange(this.min, this.max);
+    public copy(): MathHelper {
+        return new MathHelper(this.min, this.max);
     }
 
     /**
@@ -88,7 +88,7 @@ export class NumberRange {
      * @returns {number}
      */
     public int(): number {
-        return NumberRange.int(this.min, this.max);
+        return MathHelper.int(this.min, this.max);
     }
 
     /**
@@ -96,7 +96,7 @@ export class NumberRange {
      * @returns {number}
      */
     public float(): number {
-        return NumberRange.float(this.min, this.max);
+        return MathHelper.float(this.min, this.max);
     }
 
     /**
@@ -104,7 +104,7 @@ export class NumberRange {
      * @returns {number}
      */
     public range(): number {
-        return NumberRange.range(this.max - this.min);
+        return MathHelper.range(this.max - this.min);
     }
 
     /**
@@ -113,7 +113,7 @@ export class NumberRange {
      * @returns {boolean}
      */
     public chance(chance: number): boolean {
-        return NumberRange.chance(chance);
+        return MathHelper.chance(chance);
     }
 
     /**
@@ -123,7 +123,7 @@ export class NumberRange {
      * @returns {T}
      */
     public get<T>(...args: T[]): T | undefined {
-        return NumberRange.get(...args);
+        return MathHelper.get(...args);
     }
 
     /**
@@ -133,7 +133,7 @@ export class NumberRange {
      * @returns {T}
      */
     public weighted<T>(...chances: { weight: number; value: T }[]): T | undefined {
-        return NumberRange.weighted(...chances);
+        return MathHelper.weighted(...chances);
     }
 
     /* ------------------------- */
@@ -206,5 +206,27 @@ export class NumberRange {
         }
 
         return chances[0]!.value;
+    }
+
+    /**
+     * @param {number} x - The number that will be modified
+     * @param {number} decimal - The number of decimal places to keep
+     * @example
+     * trunc(5.1617667, 2)  //output: 5.16
+     */
+    public static trunc(x: number, decimal: number) {
+        let y = 10 ** decimal;
+        return Math.trunc(x * y) / y;
+    }
+
+    /**
+     * Clamps a number between min and max values
+     * @param val - Value to clamp
+     * @param min - Minimum bound
+     * @param max - Maximum bound
+     * @returns Clamped value
+     */
+    public static clampNumber(val: number, min: number, max: number): number {
+        return Math.min(Math.max(val, min), max);
     }
 }
