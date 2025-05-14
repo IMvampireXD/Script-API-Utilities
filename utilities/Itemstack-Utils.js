@@ -1,4 +1,4 @@
-import { world, BlockPermutation, ItemStack, EquipmentSlot, system, EnchantmentType } from "@minecraft/server";
+import { world, BlockPermutation, ItemStack, EquipmentSlot, system, EnchantmentType, BlockTypes } from "@minecraft/server";
 
 export class ItemStackUtils {
 
@@ -182,7 +182,7 @@ export class ItemStackUtils {
     }
 
     /**
-     * @author GegaMC
+     * @author FetchBot
      * @remarks Check if ItemStack is a block. For example, a minecraft:stone is a block, but minecraft:iron_shovel isn't.
      * @param {ItemStack} itemStack
      * @returns {Boolean}
@@ -198,10 +198,11 @@ export class ItemStackUtils {
      */
     static isBlock(itemStack) {
         try {
-            BlockPermutation.resolve(itemStack.typeId)
-            return true;
-        } catch { }
-        return false
+            BlockTypes?.get(itemStack?.typeId) !== undefined;
+        }
+        catch {
+            return false;
+        }
     }
 
     /**
