@@ -104,8 +104,6 @@ export class CustomEvents {
                         return;
                     // Call the developer's callback with detailed event data
                     callBack({ player: shooter, target: target, projectile: projectileType });
-                    // Play a sound (default behavior)
-                    shooter.playSound("random.orb", { volume: 0.4, pitch: 1.0 });
                     // Unsubscribe after detecting the hit
                     world.afterEvents.projectileHitEntity.unsubscribe(callback);
                 }
