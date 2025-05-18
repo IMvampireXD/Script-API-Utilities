@@ -8,18 +8,19 @@
 
 A library of useful functions for simplifying development with Minecraft Bedrock's Script API.
 
-## 📁 List of functions:
+## List of functions:
 
-### block-utilities.js:
+### Block-Utils.js:
 
 | Function                  | Description                                                                         |
 | ------------------------- | ----------------------------------------------------------------------------------- |
+| cancelBlockBreaking       | Cancel the breaking of the specefic block.                                          |
 | breakBlocksFromStartBlock | Breaks block from a starting block with provided width, height and depth            |
 | placeBlockAboveWater      | Function to place a block directly above water, replicating behaviour of lily pads. |
 
 ---
 
-### entity-utilities.js:
+### Entity-Utils.js:
 
 | Function                | Description                                                                          |
 | ----------------------- | ------------------------------------------------------------------------------------ |
@@ -39,7 +40,7 @@ A library of useful functions for simplifying development with Minecraft Bedrock
 
 ---
 
-### math-utilities.js:
+### Math-Utils.js:
 
 | Function        | Description                                 |
 | --------------- | ------------------------------------------- |
@@ -47,7 +48,17 @@ A library of useful functions for simplifying development with Minecraft Bedrock
 
 ---
 
-### ItemStack-utilities.js:
+### Custom-Events.js:
+
+| Function        | Description                                                         |
+| --------------- | ------------------------------------------------------------------- |
+| onItemPickup    | Detects when player picks up any item.                              |
+| onItemDrop      | Detects when player drops any item.                                 |
+| onProjectileHit | Detects when a player shoots a projectile that hits another entity. |
+| onDoubleJump    | Detects when a player does a double jump.                           |
+
+---
+### ItemStack-Utils.js:
 
 | Function             | Description                                                                                    |
 | -------------------- | ---------------------------------------------------------------------------------------------- |
@@ -59,6 +70,16 @@ A library of useful functions for simplifying development with Minecraft Bedrock
 | isHavingItemQuantity | Returns true if the player has the specified amount of item in the inventory. Otherwise false. |
 
 ---
+
+### Dimension-Utils.js:
+
+| Function             | Description                                                                                         |
+| -------------------- | --------------------------------------------------------------------------------------------------- |
+| runCommands          | Run multiple commands at once.                                                                      |
+| spawnItem            | Spawn an item in a location.                                                                        |
+| getBlock             | Gets a block from any dimension & location in world asynchronously (Even if the chunk is unloaded)  |
+| getBiome             | Get the approximate biome on a location. ( Underground biomes are supported. )                      |
+
 
 # Usage Example
 
