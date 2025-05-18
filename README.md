@@ -10,6 +10,20 @@ A library of useful functions for simplifying development with Minecraft Bedrock
 
 ## List of functions:
 
+### Inventory-Utils.js:
+
+
+| Function                    | Description                                                                         |
+| --------------------------- | ----------------------------------------------------------------------------------- |
+| getInventory                | Get a player's inventory container easily                                           |
+| clearInventory              | Clears player's inventory.                                                          |
+| hasItem                     | Checks if the player has a specified quantity of a certain item in his inventory.   |
+| addItem                     | Adds an item to player's inventory                                                  |
+| removeItem                  | Removes a specific amount of items from the player's inventory.                     |
+| saveInventory               | Save the player's full inventory into a dynamic property.                           |
+| loadInventory               | Load the saved inventory                                                            |
+
+
 ### Block-Utils.js:
 
 | Function                    | Description                                                                         |
