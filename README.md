@@ -73,14 +73,19 @@ A library of useful functions for simplifying development with Minecraft Bedrock
 
 ### ItemStack-Utils.js:
 
-| Function             | Description                                                                                    |
-| -------------------- | ---------------------------------------------------------------------------------------------- |
-| saveInventory        | Saves everything of Inventory into a dynamic property.                                         |
-| loadInventory        | Load the saved inventory.                                                                      |
-| addEnchantment       | Adds enchantment to an item.                                                                   |
-| transferEnchantments | Transfer enchantments from an item to another.                                                 |
-| spawnItem            | Spawn an item in a location.                                                                   |
-| isHavingItemQuantity | Returns true if the player has the specified amount of item in the inventory. Otherwise false. |
+| Function             | Description                                                                                                                                               |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| cloneItemStackInfo   | Copies all relevant data from one itemStack to another.                                                                                                   |
+| createItemStack      | Creates a custom ItemStack with additional data (nameTag, lore, enchantments, and durability)                                                             |
+| clearAllEnchantments | Removes all enchantments from an item                                                                                                                     |
+| serializeItemStack   | Serializes an itemStack allowing the ItemStack being able to be saved in dynamic property.                                                                |
+| deserializeItemStack | Deserializes and retrieves an itemStack from storage data.                                                                                                |
+| getEnchantments      | Extracts enchantments from an item as an object.                                                                                                          |
+| applyEnchantments    | Adds enchantment to an item.                                                                                                                              |
+| transferEnchantments | Transfer enchantments from an item to another.                                                                                                            |
+| isBlock              | Check if ItemStack is a block. For example, minecraft:stone is a block, but minecraft:iron_shovel isn't.                                                  |
+| getWearableSlot      | Retrieve the EquipmentSlot that this ItemStack can be worn into. For example, an iron chestplate will return "Chest", a totem of undying return "Offhand" |
+| getStoredItems       | Get the item contents of an Item. For example, items inside a shulkerbox and bundles                                                                      |
 
 ---
 
