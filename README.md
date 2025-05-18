@@ -28,19 +28,13 @@ A library of useful functions for simplifying development with Minecraft Bedrock
 
 | Function                | Description                                                                          |
 | ----------------------- | ------------------------------------------------------------------------------------ |
+| isPlayer                | Checks if the entity is player or not.                                               |
 | getCardinalDirection    | Gets the cardinal direction of an Entity - "up"/"down"/"north"/"east"/"south"/"west" |
 | isUnderground           | Function to return boolean whether the player is underground or not.                 |
 | isPlayerOnSurface       | Function to return boolean whether the player is on surface or not.                  |
 | moveToLocation          | Moves the entity to specified location using applyKnockback or applyImpulse          |
-| getDevice               | Gets the platform/device the player is using.                                        |
-| detectPlayerShootsEvent | Detects when a player shoots a projectile that hits another entity.                  |
-| detectDoubleJumpEvent   | Detects when a player does a double jump.                                            |
-| isRidingEntity          | Checks if a player is riding a specific entity type.                                 |
-| isCreative              | Checks if player is in creative.                                                     |
-| isSurvival              | Checks if the player is in survival.                                                 |
-| isPlayer                | Checks if the entity is player or not.                                               |
-| detectItemDrop          | Fires an event if the player has dropped an item.                                    |
-| detectPickingUpItem     | Fires an event if the player has picked up an item.                                  |
+| shootProjectile         | Shoots a projectile from a entity's view direction.                                  |
+| getEntityHitboxSize     | Gets entity hitbox size                                                              |
 
 ---
 
