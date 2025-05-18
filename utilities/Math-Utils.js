@@ -1,24 +1,89 @@
-class Methods {
-    /**
-     * @param {number} x - The number that will be modified
-     * @param {number} decimal - The number of decimal places to keep
-     * @example
-     * trunc(5.1617667, 2)  //output: 5.16
-     */
-    static trunc(x, decimal) {
-        let y = 10 ** decimal;
-        return Math.trunc(x * y) / y;
-    }
+class MathHelper {
+  /**
+   * @param {number} x - The number that will be modified
+   * @param {number} decimal - The number of decimal places to keep
+   * @example
+   * trunc(5.1617667, 2)  //output: 5.16
+   */
+  static trunc(x, decimal) {
+    let y = 10 ** decimal;
+    return Math.trunc(x * y) / y;
+  }
     
-    // dist/minecraft-math.js -> lib/general/clamp.js 
-    static clampNumber(val, min, max) {
-        return Math.min(Math.max(val, min), max);
-    }
+  // dist/minecraft-math.js -> lib/general/clamp.js 
+  static clampNumber(val, min, max) {
+    return Math.min(Math.max(val, min), max);
+  }
     
+  /**
+   * Converts degrees to radians
+   * @param {number} degrees The angle in degrees
+   * @returns The angle in radians
+   */
+  static toRadians(degrees) {
+    return (degrees * Math.PI) / 180;
+  }
+
+  /**
+   * Converts radians to degrees
+   * @param {number} radians The angle in degrees
+   * @returns The angle in degrees
+   */
+  static toDegrees(radians) {
+    return (radians * 180) / Math.PI;
+  }
+
 }
 
+class AngleUtils {
+  /**
+   * Finds the X-Z angle (yaw) between to Vectors. 0 degrees is at Z
+   * @param {import("@minecraft/server").Vector3} a
+   * @param {import("@minecraft/server").Vector3} b
+   */
+  static findYawBetween(a, b) {
+    const dx = -a.x + b.x;
+    const dz = -a.z + b.z;
 
-function 
+    const angle = MathHelper.toDegrees(Math.atan2(dz, dx));
+
+    return angle;
+  }
+
+  /**
+   * Finds the Y angle (pitch) between to Vectors.
+   * @param {import("@minecraft/server").Vector3} a
+   * @param {import("@minecraft/server").Vector3} b
+   */
+  static findPitchBetween(a, b) {
+    const dx = -a.x + b.x;
+    const dz = -a.z + b.z;
+    const dy = -a.y + b.y;
+
+    const d = Math.sqrt(dx * dx + dz * dz);
+
+    const angle = MathHelper.toDegrees(Math.atan2(dy, d));
+
+    return angle;
+  }
+
+  /**
+   * Interpolates 2 angles on a circular board in the shortest path
+   * @param {number} a
+   * @param {number} b
+   * @param {number} t
+   * @returns {number} the interpolated value
+   */
+  static interpolateCircular(a, b, t) {
+    let delta = b - a;
+
+    if (delta > 180) delta -= 360;
+    if (delta < 180) delta += 360;
+
+    return a + delta * t;
+  }
+
+}
 
 /**
  * Random Utility Class
