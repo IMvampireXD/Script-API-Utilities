@@ -9,7 +9,16 @@ class Methods {
         let y = 10 ** decimal;
         return Math.trunc(x * y) / y;
     }
+    
+    // dist/minecraft-math.js -> lib/general/clamp.js 
+    static clampNumber(val, min, max) {
+        return Math.min(Math.max(val, min), max);
+    }
+    
 }
+
+
+function 
 
 /**
  * Random Utility Class
