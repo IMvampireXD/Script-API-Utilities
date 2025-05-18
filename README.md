@@ -12,11 +12,15 @@ A library of useful functions for simplifying development with Minecraft Bedrock
 
 ### Block-Utils.js:
 
-| Function                  | Description                                                                         |
-| ------------------------- | ----------------------------------------------------------------------------------- |
-| cancelBlockBreaking       | Cancel the breaking of the specefic block.                                          |
-| breakBlocksFromStartBlock | Breaks block from a starting block with provided width, height and depth            |
-| placeBlockAboveWater      | Function to place a block directly above water, replicating behaviour of lily pads. |
+| Function                    | Description                                                                         |
+| --------------------------- | ----------------------------------------------------------------------------------- |
+| getNearbyBlocks             | Gets adjacent blocks connected to the current block.                                |
+| placeBlockAboveWater        | Function to place a block directly above water, replicating behaviour of lily pads. |
+| getRedstonePower            | Gets redstone power of the block.                                                   |
+| replaceBlocksInArea         | Replaces blocks of a specefic type in an area.                                      |
+| replaceBlocksFromStartBlock | Replaces blocks from start block with a specified Width, Height, Depth.             |
+| cancelBlockBreaking         | Cancel the breaking of the specefic block.                                          |
+| cancelBlockPlacing          | Cancel the placing of the specefic block.                                           |
 
 ---
 
@@ -58,6 +62,7 @@ A library of useful functions for simplifying development with Minecraft Bedrock
 | onDoubleJump    | Detects when a player does a double jump.                           |
 
 ---
+
 ### ItemStack-Utils.js:
 
 | Function             | Description                                                                                    |
