@@ -92,5 +92,28 @@ export class StringUtils {
         if (result.length <= 1) result += text.replace(space, '')[1];
         return result.substring(0, length).toUpperCase();
     }
+    /**
+     * Get the byte size of a string.
+     * @param {string} str - The input string.
+     * @returns {number} - The byte size of the string.
+     */
+    static getByteSize(str) {
+        let byteSize = 0;
 
+        for (let i = 0; i < str.length; i++) {
+            const charCode = str.charCodeAt(i);
+            // Count each byte based on UTF-8 encoding rules
+            if (charCode <= 0x7F) {
+                byteSize += 1;
+            } else if (charCode <= 0x7FF) {
+                byteSize += 2;
+            } else if (charCode <= 0xFFFF) {
+                byteSize += 3;
+            } else {
+                byteSize += 4;
+            }
+        }
+        return byteSize;
+    }
+    
 }
