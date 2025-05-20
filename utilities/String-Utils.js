@@ -92,6 +92,7 @@ export class StringUtils {
         if (result.length <= 1) result += text.replace(space, '')[1];
         return result.substring(0, length).toUpperCase();
     }
+    
     /**
      * Get the byte size of a string.
      * @param {string} str - The input string.
@@ -114,6 +115,31 @@ export class StringUtils {
             }
         }
         return byteSize;
+    }
+    
+    /**
+     * Split a string into chunks with a maximum byte size.
+     * @param {string} str - The input string.
+     * @param {number} chunkSize - The maximum byte size for each chunk.
+     * @returns {string[]} - An array of string chunks.
+     */
+    static splitStringIntoChunks(str, chunkSize) {
+        const chunks = [];
+        let currentChunk = '';
+
+        for (let i = 0; i < str.length; i++) {
+            const char = str[i];
+            const charCode = char.charCodeAt(0);
+            if ((currentChunk.length + char.length) * 2 > chunkSize) {
+                chunks.push(currentChunk);
+                currentChunk = '';
+            }
+            currentChunk += char;
+        }
+        if (currentChunk.length > 0) {
+            chunks.push(currentChunk);
+        }
+        return chunks;
     }
     
 }
