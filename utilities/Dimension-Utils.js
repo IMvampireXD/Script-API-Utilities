@@ -1,6 +1,27 @@
-import { Dimension, ItemStack, system, world } from "@minecraft/server";
+import { Dimension, ItemStack, system, world, Block, ItemStack } from "@minecraft/server";
 
 export class DimensionUtils {
+    
+    /**
+     * Get the overworld dimension
+     * @type {Dimension}
+     * @readonly
+     */
+    static overworld = world.getDimension("minecraft:overworld");
+
+    /**
+     * Get the Nether dimension
+     * @type {Dimension}
+     * @readonly
+     */
+    static nether = world.getDimension("minecraft:nether");
+
+    /**
+     * Get the End dimension
+     * @type {Dimension}
+     * @readonly
+     */
+    static theEnd = world.getDimension("minecraft:the_end");
 
     /**
      * Run multiple commands at once.
@@ -46,7 +67,6 @@ export class DimensionUtils {
       * 
       */
     static spawnItem(dimension, typeId, location, amount = 1, nameTag = null) {
-        // Error Handling
         if (!dimension || typeof dimension.spawnItem !== "function") {
             console.error("Error: Invalid Dimension object. Ensure it has a spawnItem method.");
             return;
@@ -63,12 +83,9 @@ export class DimensionUtils {
             console.error("Error: Invalid location. It should be an object.");
             return;
         }
-        // Create the item
         const item = new ItemStack(typeId, amount);
-        // Apply nameTag if provided
         if (nameTag)
             item.nameTag = nameTag;
-        // Spawn the item
         try {
             dimension.spawnItem(item, location);
         }
