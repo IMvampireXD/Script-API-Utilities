@@ -26,14 +26,15 @@ export class BlockUtils {
 
     /**
      * Gets adjacent blocks connected to the current block.
-     * @param {(block:Block) => boolean} filter A filter to apply to the search.
-     * @param {number} maxSearch The maximum number of blocks to search.
+     * @param {Block} block - The actual block to search for its nearby blocks.
+     * @param {(block:Block) => boolean} filter - A filter to apply to the search.
+     * @param {number} maxSearch - The maximum number of blocks to search.
      * @returns - An array of adjacent blocks.
      */
-    static getNearbyBlocks(filter, maxSearch) {
+    static getNearbyBlocks(block, filter, maxSearch) {
         const connectedBlocks = [];
         const visited = new Set();
-        const { x, y, z } = this.location;
+        const { x, y, z } = block.location;
         const queue = [vec3(x, y, z)];
         while (queue.length > 0 && connectedBlocks.length < maxSearch) {
             const currentPosition = queue.shift();
@@ -42,7 +43,7 @@ export class BlockUtils {
                 for (const direction of Vec3.directions) {
                     const newPosition = currentPosition.add(direction);
                     if (!visited.has(newPosition)) {
-                        const adjacentBlock = this.dimension.getBlock(vec3(newPosition.x, newPosition.y, newPosition.z));
+                        const adjacentBlock = block.dimension.getBlock(vec3(newPosition.x, newPosition.y, newPosition.z));
                         if (adjacentBlock && filter(adjacentBlock)) {
                             connectedBlocks.push(adjacentBlock);
                             queue.push(newPosition);
