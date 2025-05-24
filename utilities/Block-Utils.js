@@ -23,39 +23,97 @@ export class BlockUtils {
             }
         })
     }
-
+    
     /**
-     * Gets adjacent blocks connected to the current block.
-     * @param {Block} block - The actual block to search for its nearby blocks.
-     * @param {(block:Block) => boolean} filter - A filter to apply to the search.
-     * @param {number} maxSearch - The maximum number of blocks to search.
-     * @returns - An array of adjacent blocks.
+     * Gets surrounding blocks connected to the current block.
+     * @param {Block} block - Starting block.
+     * @param {(block: Block) => boolean} filter - A filter to match desired blocks.
+     * @param {number} maxSearch - Maximum number of blocks to search
+     * @returns {Block[]} - Array of adjacent blocks.
+     * 
+     * @example
+     * world.beforeEvents.playerBreakBlock.subscribe(({ block, itemStack }) => {
+     *  if (itemStack?.typeId !== "minecraft:stick") return;
+     *
+     *  const filter = (b) => b.typeId === "minecraft:stone";
+     *
+     *  getNearbyBlocks(block, filter, 100).forEach((e) => {
+     *      
+     *      system.run(() => e.setType(`air`));
+     * 
+     *    })
+     * })
+     * 
      */
     static getNearbyBlocks(block, filter, maxSearch) {
-        const connectedBlocks = [];
-        const visited = new Set();
-        const { x, y, z } = block.location;
-        const queue = [vec3(x, y, z)];
-        while (queue.length > 0 && connectedBlocks.length < maxSearch) {
-            const currentPosition = queue.shift();
-            visited.add(currentPosition);
-            try {
-                for (const direction of Vec3.directions) {
-                    const newPosition = currentPosition.add(direction);
-                    if (!visited.has(newPosition)) {
-                        const adjacentBlock = block.dimension.getBlock(vec3(newPosition.x, newPosition.y, newPosition.z));
-                        if (adjacentBlock && filter(adjacentBlock)) {
-                            connectedBlocks.push(adjacentBlock);
-                            queue.push(newPosition);
-                        }
-                    }
+        function vec3(x, y, z) {
+            return {
+                x, y, z,
+                add(other) {
+                    return vec3(this.x + other.x, this.y + other.y, this.z + other.z);
+                },
+                toString() {
+                    return `${this.x},${this.y},${this.z}`;
                 }
+            };
+        }
+        const Vec3 = {
+            directions: [
+                vec3(1, 0, 0),
+                vec3(-1, 0, 0),
+                vec3(0, 1, 0),
+                vec3(0, -1, 0),
+                vec3(0, 0, 1),
+                vec3(0, 0, -1)
+            ]
+        };
+        const connectedBlocks = [];
+        const visited = new Map();
+        const posToKey = (pos) => `${pos.x},${pos.y},${pos.z}`;
+
+        const startPos = vec3(block.location.x, block.location.y, block.location.z);
+        const queue = [startPos];
+        visited.set(posToKey(startPos), true);
+
+        while (queue.length > 0 && connectedBlocks.length < maxSearch) {
+            const currentPos = queue.shift();
+
+            let currentBlock;
+            try {
+                currentBlock = block.dimension.getBlock(currentPos);
             } catch (err) {
                 console.warn(err, err.stack);
+                continue;
+            }
+
+            if (!currentBlock || !filter(currentBlock)) continue;
+            connectedBlocks.push(currentBlock);
+
+            for (const direction of Vec3.directions) {
+                if (connectedBlocks.length >= maxSearch) break;
+
+                const neighborPos = currentPos.add(direction);
+                const key = posToKey(neighborPos);
+                if (visited.has(key)) continue;
+                visited.set(key, true);
+
+                let neighbor;
+                try {
+                    neighbor = block.dimension.getBlock(neighborPos);
+                } catch (err) {
+                    console.warn(err, err.stack);
+                    continue;
+                }
+
+                if (!neighbor || neighbor.typeId === "minecraft:air") continue;
+                if (filter(neighbor)) {
+                    queue.push(neighborPos);
+                }
             }
         }
+
         return connectedBlocks;
-    };
+    }
 
     /**
      * Gets redstone power of the block
