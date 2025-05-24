@@ -3,42 +3,51 @@ import { world, system, Player } from "@minecraft/server"
 export class CustomEvents {
 
     /**
-      * Detects when player picks up any item.
-      * @param {function({player: player, pickedItem: item})} callBack
-      * @author Carchi77
-      * GitHub: https://github.com/Carchi777/detect-who-picked-up-an-item
-      * 
-      * @example
-      * import { world } from "@minecraft/server"
-      * detectPlayerPickupItem((event) => {
-      *  console.log(`Player ${player.nameTag} picked up ${item.amount} amount of ${item.typeId.slice(10)}`);
-      * });
-      * 
-      */
+     * Detects when player picks up any item.
+     * @param {function({player: player, pickedItem: item})} callBack
+     * @author Carchi77 - Modified by @finnafinest_
+     * GitHub: https://github.com/Carchi777/detect-who-picked-up-an-item
+     * 
+     * @example
+     * CustomEvents.onItemPickup((event) => {
+     *     console.warn(`Player ${event.player.name} picked up ${event.pickedItem.amount} amount of ${event.pickedItem.typeId.slice(10)}`);
+     * });
+     */
     static onItemPickup(callBack) {
-        world.beforeEvents.entityRemove.subscribe(e => {
-            const { removedEntity: entity } = e;
-            const item = entity.getComponent("item")?.itemStack
-            if (!item) return
-            const players = entity.dimension.getEntities(
-                { maxDistance: 1.5, location: entity.location, type: "player" }
-            )
-            players.forEach(player => {
-                const inv = player.getComponent('inventory').container
-                const items = Array
-                    .from({ length: inv.size }, (_, i) => inv.getItem(i))
-                    .filter(k => k != null);
-                system.run(() => {
-                    const valid = Array
-                        .from({ length: inv.size }, (_, i) => inv.getItem(i))
-                        .filter(k => k != null)
-                        .some((k, i) => k.typeId === item.typeId && k.amount != items[i]?.amount);
-                    if (valid) {
-                        callBack({ player: player, pickedItem: item })
+        const groundItems = new Set();
+        world.afterEvents.entitySpawn.subscribe(event => {
+            const entity = event.entity;
+            if (entity.hasComponent('item')) {
+                groundItems.add(entity);
+            }
+        });
+        world.beforeEvents.entityRemove.subscribe(event => {
+            const entity = event.removedEntity;
+            if (!groundItems.has(entity)) return;
+            groundItems.delete(entity);
+
+            const itemStack = entity.getComponent('item').itemStack;
+            if (!itemStack) return;
+            const nearbyPlayers = entity.dimension.getEntities({
+                location: entity.location,
+                maxDistance: 2,
+                type: 'player'
+            });
+
+            for (const player of nearbyPlayers) {
+                const inv = player.getComponent('inventory').container;
+                for (let i = 0; i < inv.size; i++) {
+                    const slotItem = inv.getItem(i);
+                    if (slotItem && slotItem.typeId === itemStack.typeId) {
+                        callBack({
+                            player: player,
+                            pickedItem: itemStack
+                        });
+                        return;
                     }
-                })
-            })
-        })
+                }
+            }
+        });
     }
 
     /**
@@ -48,8 +57,8 @@ export class CustomEvents {
       * 
       * @example
       * import { world } from "@minecraft/server"
-      * detectPlayerDropItem((event) => {
-      *  world.sendMessage(`§a${item.typeId}§r was dropped by §2${player.nameTag}§r!`)
+      * CustomEvents.onItemDrop((event) => {
+      *     world.sendMessage(`§a${event.droppedItem.typeId}§r was dropped by §2${event.player.name}§r!`)
       * });
       * 
       */
@@ -83,8 +92,8 @@ export class CustomEvents {
       * @example
       * import { world } from "@minecraft/server"
       * 
-      * CustomEvents.detectPlayerShootsEvent((event) => {
-      *  console.log(`Player ${event.player.name} shot at ${event.target.name}`);
+      * CustomEvents.onProjectileHit((event) => {
+      *     console.warn(`Player ${event.player.name} shot at ${event.target.typeId}`);
       * });
       * 
       */
@@ -96,15 +105,12 @@ export class CustomEvents {
                 const { source, projectile } = arg;
                 const hitInfo = arg.getEntityHit();
                 if (hitInfo?.entity && source instanceof Player && projectile === entity) {
-                    const shooter = source; // Who shot the projectile
-                    const target = hitInfo.entity; // Whom the projectile hit
-                    const projectileType = projectile.typeId; // What was shot
-                    // If 'whom' is specified, check if it matches the hit entity
+                    const shooter = source;
+                    const target = hitInfo.entity;
+                    const projectileType = projectile.typeId;
                     if (whom && target !== whom)
                         return;
-                    // Call the developer's callback with detailed event data
                     callBack({ player: shooter, target: target, projectile: projectileType });
-                    // Unsubscribe after detecting the hit
                     world.afterEvents.projectileHitEntity.unsubscribe(callback);
                 }
             });
@@ -112,41 +118,32 @@ export class CustomEvents {
     }
 
     /**
-     * Detects when a player does a double jump.
+     * Detects when a player does a jump.
      * 
      * @param {function({player: Player})} callBack 
      * 
      * @example
      * import { world } from "@minecraft/server"
      * 
-     * const player = world.getPlayers()[0];
-     * CustomEvents.detectDoubleJumpEvent((player) => {
-     *  console.log(`Player ${player.name} did a double jump!`);
+     * CustomEvents.onJump((event) => {
+     *     const player = event.player;
+     *     console.warn(`Player ${player.name} did a jump!`);
      * });
      * 
      */
-    static onDoubleJump(callBack) {
+    static onJump(callBack) {
+        const jumpingPlayers = new Map();
         system.runInterval(() => {
-            world.getAllPlayers().forEach(player => {
-                // Initialize jump tracking if not set
-                if (!player.hasOwnProperty("jumpCount"))
-                    player.jumpCount = 0;
-                if (!player.hasOwnProperty("lastJumping"))
-                    player.lastJumping = false;
-                // Reset jump count when touching the ground
-                if (player.isOnGround)
-                    player.jumpCount = 0;
-                // Detect double jump: player jumps while airborne & wasn't jumping before
-                if (player.isJumping && !player.lastJumping && !player.isOnGround) {
-                    player.jumpCount++;
-                    if (player.jumpCount === 2) {
-                        callBack(player); // Execute developer's custom function
-                    }
+            world.getPlayers().forEach((player) => {
+                const wasJumping = jumpingPlayers.get(player) || false;
+                const isJumpingNow = player.isJumping;
+                if (isJumpingNow && !wasJumping) {
+                    callBack({ player: player });
+                    jumpingPlayers.set(player, true);
+                } else if (!isJumpingNow && wasJumping) {
+                    jumpingPlayers.set(player, false);
                 }
-                // Store last jumping state
-                player.lastJumping = player.isJumping;
             });
-        });
+        }, 1);
     }
-
 }
