@@ -174,7 +174,7 @@ export class PlayerUtils {
      */
     static getBlockLookingAt(player, maxDistance) {
         try {
-            const rayBlock = player.getBlockFromViewDirection({ maxDistance: maxDistance }).block;
+            const rayBlock = player.getBlockFromViewDirection({ maxDistance: maxDistance })?.block;
             if (rayBlock) {
                 return rayBlock;
             }
@@ -188,7 +188,7 @@ export class PlayerUtils {
      */
     static getEntityLookingAt(player, maxDistance) {
         try {
-            const rayEntity = player.getEntitiesFromViewDirection({ maxDistance: maxDistance })[0].entity
+            const rayEntity = player.getEntitiesFromViewDirection({ maxDistance: maxDistance })[0]?.entity
             if (rayEntity) {
                 return rayEntity;
             }
@@ -213,34 +213,6 @@ export class PlayerUtils {
      */
     static getEquipmentSlot(target, slot) {
         target?.getComponent("equippable")?.getEquipment(slot);
-    }
-
-    /**
-     * Checks if player is looking at a specefied location.
-     * 
-     * @param {Player} player
-     * @param {Vector3} position
-     * @param {number} maxAngle
-     * @returns {boolean} True if player is looking at the specified position.
-     */
-    static isPlayerLookingAt(player, position, maxAngle = 15) {
-        const dir = {
-            x: position.x - player.location.x,
-            y: position.y - player.location.y,
-            z: position.z - player.location.z
-        };
-        const length = Math.sqrt(dir.x * dir.x + dir.y * dir.y + dir.z * dir.z);
-        if (length === 0) return true;
-        const normDir = {
-            x: dir.x / length,
-            y: dir.y / length,
-            z: dir.z / length
-        };
-        const viewDir = player.getViewDirection();
-        const dot = normDir.x * viewDir.x + normDir.y * viewDir.y + normDir.z * viewDir.z;
-        const angle = Math.acos(dot) * (180 / Math.PI);
-
-        return angle <= maxAngle;
     }
 
     /**
@@ -361,24 +333,20 @@ export class PlayerUtils {
      * const player = world.getPlayers()[0];
      * const isRidingPlayer = isRidingEntity(player, "minecraft:horse");
      * @throws If player is not a Player.
-     * @throws if Player doesn't have a `riding` component
      */
     static isRidingEntity(player, entityType) {
-        // Validate the player object
         if (!player || typeof player.getComponent !== 'function') {
-            throw new Error('Invalid player object provided. Player must have a `getComponent` method.');
+            throw new Error('Invalid player.');
         }
-        // Safely get the 'riding' component
+        if (!player.isValid) return;
         const riding = player.getComponent('riding');
-        // Validate the riding component and entityRidingOn
-        if (!riding) {
-            throw new Error('Player does not have a `riding` component.');
-        }
+        if (!riding) return;
         if (!riding.entityRidingOn) {
-            throw new Error('Player is not riding any entity.');
+            return true;
         }
-        // Compare the typeId of the entity being ridden with the provided entityType
-        return riding.entityRidingOn.typeId === entityType;
+        if (riding.entityRidingOn.typeId === entityType) {
+            return false;
+        };
     }
 
 }
