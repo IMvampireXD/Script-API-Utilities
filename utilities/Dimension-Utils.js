@@ -1,7 +1,7 @@
 import { Dimension, ItemStack, system, world, Block, ItemStack } from "@minecraft/server";
 
 export class DimensionUtils {
-    
+
     /**
      * Get the overworld dimension
      * @type {Dimension}
@@ -229,6 +229,37 @@ export class DimensionUtils {
                 const biome = biomeFound.sort((a, b) => a[1] - b[1])[0];
                 return resolve(biome[1] > 50 ? baseBiome : biome[0])
             })())
+        })
+    }
+
+    static async chunkLoader(loc, dim) {
+        if (!(dim instanceof Dimension)) {
+            console.warn("Invalid dimension!");
+            return;
+        }
+        if (typeof loc !== "object") {
+            console.warn("Invalid coordinates!");
+            return;
+        }
+
+        const { x, y, z } = loc;
+        const timeout = Date.now() + 20000;
+        const id = Math.random().toString(36).substring(2);
+        dim.runCommand(`tickingarea add ${x} ${y} ${z} ${x} ${y} ${z} "${id}"`);
+        return new Promise((res, rej) => {
+            const interval = system.runInterval(() => {
+                if (dim.getBlock(loc)) {
+                    system.clearRun(interval);
+                    dim.runCommand(`tickingarea remove ${id}`);
+                    res("Loaded chunk.");
+                }
+
+                if (Date.now() > timeout) {
+                    system.clearRun(interval);
+                    dim.runCommand(`tickingarea remove ${id}`);
+                    rej("Timed out.");
+                }
+            })
         })
     }
 }
