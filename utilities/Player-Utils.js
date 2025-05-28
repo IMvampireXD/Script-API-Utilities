@@ -342,10 +342,10 @@ export class PlayerUtils {
         const riding = player.getComponent('riding');
         if (!riding) return;
         if (!riding.entityRidingOn) {
-            return true;
+            return false;
         }
         if (riding.entityRidingOn.typeId === entityType) {
-            return false;
+            return true;
         };
     }
 
