@@ -142,4 +142,27 @@ export class StringUtils {
         return chunks;
     }
     
+    /**
+     * Splits a string by separator
+     *
+     * @param {string} input - The string to split
+     * @param {string} separator - The separator to split by
+     * @returns {string[]} Array of split strings
+     *
+     * @throws {Error} If input or separator are not strings
+     */
+    static splitBySeparator(input, separator = ":/:") {
+      if (typeof input !== 'string' || typeof separator !== 'string') {
+        throw new Error('Argument must be string');
+      }
+      if (separator === '') {
+        return [input];
+      }
+
+      return input
+        .split(separator)
+        .map(part => part.trim())
+        .filter(part => part.length > 0);
+    }
+
 }
