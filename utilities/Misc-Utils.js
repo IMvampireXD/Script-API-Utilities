@@ -1,4 +1,3 @@
-
 /**
  * Returns true every tick as of the specified tick
  * @param {number} interval The interval in ticks (1 tick = 20 sec)
@@ -22,19 +21,17 @@ export const indexOf = (s, i) => ({ l: s.lastIndexOf(i), f: s.indexOf(i) });
  */
 export const findLore = (s, l) => l.find((f) => f.includes(s));
 
-
 export class MiscUtils {
-
   /**
-    * @author frostice482
-    * 
-    * Renames function name
-    * @param fn Function
-    * @param name New function name
-    * @returns function
-    */
+   * @author frostice482
+   *
+   * Renames function name
+   * @param fn Function
+   * @param name New function name
+   * @returns function
+   */
   static renameFn(fn, name) {
-    return Object.defineProperty(fn, "name", { value: name })
+    return Object.defineProperty(fn, "name", { value: name });
   }
 
   /**
@@ -48,31 +45,30 @@ export class MiscUtils {
   }
 
   /**
-  * Delays execution for a number of game ticks.
-  * @param {number} ticks Number of ticks to wait (1 tick = 20 sec)
-  * @returns {Promise<void>}
-  */
+   * Delays execution for a number of game ticks.
+   * @param {number} ticks Number of ticks to wait (1 tick = 20 sec)
+   * @returns {Promise<void>}
+   */
   static sleep(ticks) {
     return new Promise((resolve) => system.runTimeout(resolve, ticks));
   }
 
   /**
-  * Repeats a callback a specified number of times.
-  * @param {() => void} callback The function to run
-  * @param {number} times Number of times to run the function
-  */
+   * Repeats a callback a specified number of times.
+   * @param {() => void} callback The function to run
+   * @param {number} times Number of times to run the function
+   */
   static repeat(callback, times) {
     for (let i = 0; i < times; i++) {
       callback();
     }
   }
-
 }
 
 /**
  * A fixed-size FIFO (First In, First Out) memory buffer that stores generic data.
  * Automatically removes oldest items when exceeding max size.
- * 
+ *
  * @template T
  * @author https://github.com/IWantANeko
  * @license MIT
@@ -162,7 +158,11 @@ export class MemoryBuffer {
    * @returns {T | undefined}
    */
   getLast(remove = false) {
-    return this.buffer.length === 0 ? undefined : remove ? this.buffer.pop() : this.buffer[this.buffer.length - 1];
+    return this.buffer.length === 0
+      ? undefined
+      : remove
+        ? this.buffer.pop()
+        : this.buffer[this.buffer.length - 1];
   }
 
   /**

@@ -6,7 +6,7 @@ class TimeUtils {
    * @remarks 1 hour is equal to 3600 seconds.
    */
   static fromHoursToSecs(hours) {
-    return hours * 3600
+    return hours * 3600;
   }
 
   /**
@@ -16,7 +16,7 @@ class TimeUtils {
    * @remarks 1 minute is equal to 60 seconds.
    */
   static fromMinsToSecs(minutes) {
-    return minutes * 60
+    return minutes * 60;
   }
 
   /**
@@ -26,7 +26,7 @@ class TimeUtils {
    * @remarks 1 day is equal to 86400 seconds.
    */
   static fromDaysToSecs(days) {
-    return days * 86400
+    return days * 86400;
   }
 
   /**
@@ -36,7 +36,7 @@ class TimeUtils {
    * @remarks 1000 milliseconds are equal to 1 second.
    */
   static fromMillisToSecs(milliseconds) {
-    return milliseconds / 1000
+    return milliseconds / 1000;
   }
 
   /**
@@ -46,7 +46,7 @@ class TimeUtils {
    * @remarks 20 Minecraft ticks are equal to 1 second.
    */
   static fromTicksToSecs(ticks) {
-    return ticks / 20
+    return ticks / 20;
   }
 
   /**
@@ -56,7 +56,7 @@ class TimeUtils {
    * @remarks 3600 seconds are equal to 1 hour.
    */
   static fromSecsToHours(seconds) {
-    return seconds / 3600
+    return seconds / 3600;
   }
 
   /**
@@ -66,7 +66,7 @@ class TimeUtils {
    * @remarks 60 seconds are equal to 1 minute.
    */
   static fromSecsToMins(seconds) {
-    return seconds / 60
+    return seconds / 60;
   }
 
   /**
@@ -76,7 +76,7 @@ class TimeUtils {
    * @remarks 86400 seconds are equal to 1 day.
    */
   static fromSecsToDays(seconds) {
-    return seconds / 86400
+    return seconds / 86400;
   }
 
   /**
@@ -86,7 +86,7 @@ class TimeUtils {
    * @remarks 1 second is equal to 1000 milliseconds.
    */
   static fromSecsToMillis(seconds) {
-    return seconds * 1000
+    return seconds * 1000;
   }
 
   /**
@@ -96,8 +96,8 @@ class TimeUtils {
    * @remarks 1 second is equal to 20 Minecraft ticks.
    */
   static fromSecondsToTicks(seconds) {
-    return seconds * 20
+    return seconds * 20;
   }
 }
 
-export default TimeUtils
+export default TimeUtils;

@@ -20,7 +20,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
-const isVec3Symbol = Symbol('isVec3');
+const isVec3Symbol = Symbol("isVec3");
 export function Vec3(x = 0, y = 0, z = 0) {
   if (new.target) {
     this.x = Number(x);
@@ -89,7 +89,7 @@ Vec3.equals = function equals(a, b) {
 };
 
 Vec3.multiply = function multiply(vec, num) {
-  if (typeof num == 'number')
+  if (typeof num == "number")
     return {
       x: vec.x * num,
       y: vec.y * num,
@@ -123,19 +123,16 @@ Vec3.floor = function floor(vec) {
 };
 
 Vec3.round = function (vec) {
-    return {
-        x: Math.round(vec.x),
-        y: Math.round(vec.y),
-        z: Math.round(vec.z),
-        __proto__: Vec3.prototype
-    }
-}
+  return {
+    x: Math.round(vec.x),
+    y: Math.round(vec.y),
+    z: Math.round(vec.z),
+    __proto__: Vec3.prototype,
+  };
+};
 
 Vec3.projection = function projection(a, b) {
-  return Vec3.multiply(
-    b,
-    Vec3.dot(a, b) / (b.x * b.x + b.y * b.y + b.z * b.z)
-  );
+  return Vec3.multiply(b, Vec3.dot(a, b) / (b.x * b.x + b.y * b.y + b.z * b.z));
 };
 
 Vec3.rejection = function rejection(a, b) {
@@ -157,7 +154,7 @@ Vec3.distance = function distance(a, b) {
 Vec3.from = function from(object) {
   if (Vec3.isVec3(object)) return object;
   if (Array.isArray(object)) return Vec3(object[0], object[1], object[2]);
-  if (typeof object == 'number') return Vec3(object, object, object);
+  if (typeof object == "number") return Vec3(object, object, object);
   const { x = 0, y = 0, z = 0 } = object ?? {};
   return {
     x: Number(x),
@@ -192,7 +189,7 @@ Vec3.rotate = function rotate(vec, angle, axis) {
   let rotatedVec;
 
   switch (axis) {
-    case 'x':
+    case "x":
       rotatedVec = {
         x: vec.x,
         y: vec.y * cos - vec.z * sin,
@@ -200,7 +197,7 @@ Vec3.rotate = function rotate(vec, angle, axis) {
         __proto__: Vec3.prototype,
       };
       break;
-    case 'y':
+    case "y":
       rotatedVec = {
         x: vec.x * cos + vec.z * sin,
         y: vec.y,
@@ -208,7 +205,7 @@ Vec3.rotate = function rotate(vec, angle, axis) {
         __proto__: Vec3.prototype,
       };
       break;
-    case 'z':
+    case "z":
       rotatedVec = {
         x: vec.x * cos - vec.y * sin,
         y: vec.x * sin + vec.y * cos,
@@ -217,7 +214,7 @@ Vec3.rotate = function rotate(vec, angle, axis) {
       };
       break;
     default:
-      throw new Error('Invalid rotation axis');
+      throw new Error("Invalid rotation axis");
   }
   return rotatedVec;
 };
@@ -260,10 +257,10 @@ Vec3.prototype = {
     return Vec3.rotate(this, angle, axis);
   },
   round() {
-      return Vec3.round(this);
+    return Vec3.round(this);
   },
-  equals(vec){
-      return Vec3.equals(this,vec)
+  equals(vec) {
+    return Vec3.equals(this, vec);
   },
   get length() {
     return Vec3.magnitude(this);
