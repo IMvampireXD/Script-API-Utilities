@@ -1,28 +1,46 @@
 import { Dimension, ItemStack, system, world, Block, ItemStack } from "@minecraft/server";
 
+let initialized_overworld;
+let initialized_nether;
+let initialized_theEnd;
 
+/**
+ * Load dimension before accessing to fix priviledge error
+ * Access the initialized dimension using static methods in DimensionUtils
+ */
+world.afterEvents.worldLoad.subscribe(() => {
+	initialized_overworld = world.getDimension("minecraft:overworld");
+	initialized_nether = world.getDimension("minecraft:nether");
+	initialized_theEnd = world.getDimension("minecraft:the_end");
+});
 
 export class DimensionUtils {
 	/**
-	 * Get the overworld dimension
+	 * Get the Overworld dimension, easily without priviledge error.
 	 * @type {Dimension}
 	 * @readonly
 	 */
-	static overworld = world.getDimension("minecraft:overworld");
+	static get overworld() {
+		return initialized_overworld;
+	}
 
 	/**
-	 * Get the Nether dimension
+	 * Get the Nether dimension, easily without getting priviledge error.
 	 * @type {Dimension}
 	 * @readonly
 	 */
-	static nether = world.getDimension("minecraft:nether");
+	static get nether() {
+		return initialized_nether;
+	}
 
 	/**
-	 * Get the End dimension
+	 * Get the End dimension, easiliy without getting priviledge error.
 	 * @type {Dimension}
 	 * @readonly
 	 */
-	static theEnd = world.getDimension("minecraft:the_end");
+	static get theEnd() {
+		return initialized_theEnd;
+	}
 
 	/**
 	 * Run multiple commands at once.
