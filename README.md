@@ -12,17 +12,15 @@ A library of useful functions for simplifying development with Minecraft Bedrock
 
 ### Inventory-Utils.js:
 
-
-| Function                    | Description                                                                         |
-| --------------------------- | ----------------------------------------------------------------------------------- |
-| getInventory                | Get a player's inventory container easily                                           |
-| clearInventory              | Clears player's inventory.                                                          |
-| hasItem                     | Checks if the player has a specified quantity of a certain item in his inventory.   |
-| addItem                     | Adds an item to player's inventory                                                  |
-| removeItem                  | Removes a specific amount of items from the player's inventory.                     |
-| saveInventory               | Save the player's full inventory into a dynamic property.                           |
-| loadInventory               | Load the saved inventory                                                            |
-
+| Function       | Description                                                                       |
+| -------------- | --------------------------------------------------------------------------------- |
+| getInventory   | Get a player's inventory container easily                                         |
+| clearInventory | Clears player's inventory.                                                        |
+| hasItem        | Checks if the player has a specified quantity of a certain item in his inventory. |
+| addItem        | Adds an item to player's inventory                                                |
+| removeItem     | Removes a specific amount of items from the player's inventory.                   |
+| saveInventory  | Save the player's full inventory into a dynamic property.                         |
+| loadInventory  | Load the saved inventory                                                          |
 
 ### Block-Utils.js:
 
@@ -40,15 +38,15 @@ A library of useful functions for simplifying development with Minecraft Bedrock
 
 ### Entity-Utils.js:
 
-| Function                | Description                                                                          |
-| ----------------------- | ------------------------------------------------------------------------------------ |
-| isPlayer                | Checks if the entity is player or not.                                               |
-| getCardinalDirection    | Gets the cardinal direction of an Entity - "up"/"down"/"north"/"east"/"south"/"west" |
-| isUnderground           | Function to return boolean whether the player is underground or not.                 |
-| isPlayerOnSurface       | Function to return boolean whether the player is on surface or not.                  |
-| moveToLocation          | Moves the entity to specified location using applyKnockback or applyImpulse          |
-| shootProjectile         | Shoots a projectile from a entity's view direction.                                  |
-| getEntityHitboxSize     | Gets entity hitbox size                                                              |
+| Function             | Description                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------ |
+| isPlayer             | Checks if the entity is player or not.                                               |
+| getCardinalDirection | Gets the cardinal direction of an Entity - "up"/"down"/"north"/"east"/"south"/"west" |
+| isUnderground        | Function to return boolean whether the player is underground or not.                 |
+| isPlayerOnSurface    | Function to return boolean whether the player is on surface or not.                  |
+| moveToLocation       | Moves the entity to specified location using applyKnockback or applyImpulse          |
+| shootProjectile      | Shoots a projectile from a entity's view direction.                                  |
+| getEntityHitboxSize  | Gets entity hitbox size                                                              |
 
 ---
 
@@ -91,13 +89,12 @@ A library of useful functions for simplifying development with Minecraft Bedrock
 
 ### Dimension-Utils.js:
 
-| Function             | Description                                                                                         |
-| -------------------- | --------------------------------------------------------------------------------------------------- |
-| runCommands          | Run multiple commands at once.                                                                      |
-| spawnItem            | Spawn an item in a location.                                                                        |
-| getBlock             | Gets a block from any dimension & location in world asynchronously (Even if the chunk is unloaded)  |
-| getBiome             | Get the approximate biome on a location. ( Underground biomes are supported. )                      |
-
+| Function    | Description                                                                                        |
+| ----------- | -------------------------------------------------------------------------------------------------- |
+| runCommands | Run multiple commands at once.                                                                     |
+| spawnItem   | Spawn an item in a location.                                                                       |
+| getBlock    | Gets a block from any dimension & location in world asynchronously (Even if the chunk is unloaded) |
+| getBiome    | Get the approximate biome on a location. ( Underground biomes are supported. )                     |
 
 # Usage Example
 
@@ -116,19 +113,21 @@ const player = DimensionUtils.getPlayerByName("Steve");
 
 // Check if the player is in Survival, easily by using the library.
 if (EntityUtils.isSurvival(player)) {
-  // Save the Inventory of the player, easily by using the library.
-  InventoryUtils.saveInventory(player);
+	// Save the Inventory of the player, easily by using the library.
+	InventoryUtils.saveInventory(player);
 }
 
 // Check if a player has dropped a Item, easily by using the library.
 CustomEvents.detectPlayerDropItem((event) => {
-  world.sendMessage(` ${item.typeId} was dropped by ${player.name} !`);
+	world.sendMessage(` ${item.typeId} was dropped by ${player.name} !`);
 });
 ```
 
 # Installation
+
 1. Clone or download the utilities folder.
 2. Import required functions in your scripts, as your need.
 
 # Contributing
+
 Pull requests and issue reports are welcome. Maintain consistent style with existing code.
