@@ -1,5 +1,4 @@
-
-Repo owner: IMvampireXD (discord: finnafinest_)
+Repo owner: IMvampireXD (discord: finnafinest\_)
 
 Description:
 A library containing useful utility functions for helping with creating scripts in minecraft bedrock.
