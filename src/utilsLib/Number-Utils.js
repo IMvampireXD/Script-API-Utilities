@@ -1,4 +1,16 @@
 class NumberUtils {
+
+	/**
+	 * Check if the value is a float (example- 1.1, 3.6 are float values)
+	 * @returns {boolean}
+	 */
+	static isFloat(value) {
+		return typeof value === 'number' && Number.isFinite(value) && !Number.isInteger(value);
+	}
+
+	/**
+	 * Abbreviates a large number using metric suffixes (e.g., 1.2k, 3M).
+	 */
 	static abbreviateNumber(value) {
 		if (value >= 1000) {
 			const suffixes = ["", "k", "M", "B", "T"];

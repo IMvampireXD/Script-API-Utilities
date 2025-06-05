@@ -1,4 +1,25 @@
 class TimeUtils {
+
+	/**
+	 * Delays execution for a number of game ticks.
+	 * @param {number} ticks Number of ticks to wait (1 tick = 20 sec)
+	 * @returns {Promise<void>}
+	 */
+	static sleep(ticks) {
+		return new Promise((resolve) => system.runTimeout(resolve, ticks));
+	}
+
+	/**
+ 	 * Repeats a callback a specified number of times.
+ 	 * @param {() => void} callback The function to run
+ 	 * @param {number} times Number of times to run the function
+ 	 */
+	static repeat(callback, times) {
+		for (let i = 0; i < times; i++) {
+			callback();
+		}
+	}
+
 	/**
 	 * Converts hours to seconds.
 	 * @param {number} hours - The number of hours to convert.

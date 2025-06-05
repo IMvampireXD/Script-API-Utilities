@@ -338,18 +338,22 @@ export class PlayerUtils {
 	}
 
 	/**
-	 * Checks if a player is riding a specific entity type.
+	 * Checks if a player is riding a specific entity type, Or is riding any entity if entity is not specefied
+	 * 
 	 * @param {Player} player Player to check if riding an entity
-	 * @param {string} entityType Type ID of the entity to check, example: "minecraft:horse"
+	 * @param {string} entityType Type ID of the entity to check, example: "minecraft:horse" - Default value- "any" if no typeId provided
+	 * 
 	 * @returns {boolean}
+	 * 
 	 * @example
 	 * import { world } from "@minecraft/server"
 	 *
 	 * const player = world.getPlayers()[0];
 	 * const isRidingPlayer = isRidingEntity(player, "minecraft:horse");
+	 * 
 	 * @throws If player is not a Player.
 	 */
-	static isRidingEntity(player, entityType) {
+	static isRidingEntity(player, entityType = "any") {
 		if (!player || typeof player.getComponent !== "function") {
 			throw new Error("Invalid player.");
 		}
@@ -363,4 +367,20 @@ export class PlayerUtils {
 			return true;
 		}
 	}
+}
+
+
+
+function isRidingEntity(player, entityType = "any") {
+	if (!player || typeof player.getComponent !== "function") {
+		throw new Error("Invalid player.");
+	}
+	if (!player.isValid) return false;
+
+	const riding = player.getComponent("riding");
+	if (!riding.entityRidingOn) return false;
+
+	if (entityType === "any") {
+		if (riding.entityRidingOn) return true;
+	} else return riding.entityRidingOn.typeId === entityType; 
 }

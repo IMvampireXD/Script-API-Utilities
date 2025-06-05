@@ -1,4 +1,13 @@
 export class StringUtils {
+
+	/**
+	 * Check whether the value is a string or not. 
+	 * @returns {boolean}
+	 */
+	static isString(value) {
+		return typeof value === 'string' || value instanceof String;
+	}
+
 	/**
 	 * Converts a string to a typeId format.
 	 * Example: "The End" -> "the_end"

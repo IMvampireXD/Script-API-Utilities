@@ -6,4 +6,11 @@ class ObjectUtils {
 	static deepClone(obj) {
 		return JSON.parse(JSON.stringify(obj));
 	}
+	/**
+	 * Returns boolean whether the value is a plain object or not.
+	 */
+	static isObject(value) {
+		return typeof value === 'object' && value !== null && !Array.isArray(value);
+	}
+
 }
