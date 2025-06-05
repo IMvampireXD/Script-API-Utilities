@@ -3,6 +3,9 @@
   "modules": "new_api/src/index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "format": "prettier --write ."
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "prettier": "^3.5.3"
