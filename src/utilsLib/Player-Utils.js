@@ -186,7 +186,7 @@ export class PlayerUtils {
 			if (rayBlock) {
 				return rayBlock;
 			}
-		} catch (e) {}
+		} catch (e) { }
 	}
 
 	/**
@@ -201,7 +201,7 @@ export class PlayerUtils {
 			if (rayEntity) {
 				return rayEntity;
 			}
-		} catch (e) {}
+		} catch (e) { }
 	}
 
 	/**
@@ -354,33 +354,16 @@ export class PlayerUtils {
 	 * @throws If player is not a Player.
 	 */
 	static isRidingEntity(player, entityType = "any") {
-		if (!player || typeof player.getComponent !== "function") {
-			throw new Error("Invalid player.");
-		}
-		if (!player.isValid) return;
+		if (!player?.isValid) throw new Error("Invalid player.");
 		const riding = player.getComponent("riding");
-		if (!riding) return;
-		if (!riding.entityRidingOn) {
-			return false;
-		}
-		if (riding.entityRidingOn.typeId === entityType) {
-			return true;
+		const isRiding = riding?.entityRidingOn;
+
+		if (entityType === "any") {
+			if (!isRiding) return false;
+			else if (isRiding) return true;
+		} else {
+			if (!isRiding) return false;
+			else if (isRiding.typeId === entityType) return true;
 		}
 	}
-}
-
-
-
-function isRidingEntity(player, entityType = "any") {
-	if (!player || typeof player.getComponent !== "function") {
-		throw new Error("Invalid player.");
-	}
-	if (!player.isValid) return false;
-
-	const riding = player.getComponent("riding");
-	if (!riding.entityRidingOn) return false;
-
-	if (entityType === "any") {
-		if (riding.entityRidingOn) return true;
-	} else return riding.entityRidingOn.typeId === entityType; 
 }
