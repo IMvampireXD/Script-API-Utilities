@@ -13,18 +13,18 @@ export class DirectionUtils {
      */
     static reverse(direction) {
         switch (direction) {
-            case mc.Direction.Up:
-                return mc.Direction.Down;
-            case mc.Direction.Down:
-                return mc.Direction.Up;
-            case mc.Direction.North:
-                return mc.Direction.South;
-            case mc.Direction.South:
-                return mc.Direction.North;
-            case mc.Direction.West:
-                return mc.Direction.East;
-            case mc.Direction.East:
-                return mc.Direction.West;
+            case Direction.Up:
+                return Direction.Down;
+            case Direction.Down:
+                return Direction.Up;
+            case Direction.North:
+                return Direction.South;
+            case Direction.South:
+                return Direction.North;
+            case Direction.West:
+                return Direction.East;
+            case Direction.East:
+                return Direction.West;
         }
     }
 
@@ -37,17 +37,17 @@ export class DirectionUtils {
      */
     static getRelativeBlockAt(origin, direction, steps = 1) {
         switch (direction) {
-            case mc.Direction.Up:
+            case Direction.Up:
                 return origin.above(steps);
-            case mc.Direction.Down:
+            case Direction.Down:
                 return origin.below(steps);
-            case mc.Direction.North:
+            case Direction.North:
                 return origin.north(steps);
-            case mc.Direction.South:
+            case Direction.South:
                 return origin.south(steps);
-            case mc.Direction.West:
+            case Direction.West:
                 return origin.west(steps);
-            case mc.Direction.East:
+            case Direction.East:
                 return origin.east(steps);
             default:
                 throw new Error(`Unknown direction: ${direction}`);
@@ -64,13 +64,13 @@ export class DirectionUtils {
 
         switch (blockDir) {
             case "north":
-                return mc.Direction.North;
+                return Direction.North;
             case "south":
-                return mc.Direction.South;
+                return Direction.South;
             case "west":
-                return mc.Direction.West;
+                return Direction.West;
             case "east":
-                return mc.Direction.East;
+                return Direction.East;
         }
 
         return undefined;
@@ -86,17 +86,17 @@ export class DirectionUtils {
 
         switch (blockDir) {
             case "up":
-                return mc.Direction.Up;
+                return Direction.Up;
             case "down":
-                return mc.Direction.Down;
+                return Direction.Down;
             case "north":
-                return mc.Direction.North;
+                return Direction.North;
             case "south":
-                return mc.Direction.South;
+                return Direction.South;
             case "west":
-                return mc.Direction.West;
+                return Direction.West;
             case "east":
-                return mc.Direction.East;
+                return Direction.East;
         }
 
         return undefined;
