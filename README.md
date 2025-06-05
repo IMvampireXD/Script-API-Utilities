@@ -1,9 +1,3 @@
-<p align="center">
-<img src="/.github/assets/banner.png" alt="" height="325">
-</p>
-
----
-
 # Minecraft Bedrock Script API Utilities
 
 A library of useful functions for simplifying development with Minecraft Bedrock's Script API.
