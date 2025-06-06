@@ -122,6 +122,9 @@ CustomEvents.detectPlayerDropItem((event) => {
 1. Clone or download the utilities folder.
 2. Import required functions in your scripts, as your need.
 
+# Acknowledgement
+Most of these functions are NOT created by me. Some are created by my friends. And some of them, I collected these from the Discord Community of Bedrock Addons. Those are resources meaning anyone can use. And I just collected them into one script. The project is lisenced by the MIT lisence. The creators of each functions are given credit in JSDoc. If you have any issues, please contact me on discord: finnafinest_
+
 # Contributing
 
 Pull requests and issue reports are welcome. Maintain consistent style with existing code.
