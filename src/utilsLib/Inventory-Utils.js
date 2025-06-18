@@ -95,11 +95,11 @@ export class InventoryUtils {
 	 * @param {number} [amount=0] - The number of items to remove. (Clears all if no amount provided)
 	 *
 	 * @example
-	 * // Remove 5 apples
+	 * -// Remove 5 apples
 	 * removeItem(player, "minecraft:apple", 5);
 	 *
 	 * @example
-	 * // Clear all apples
+	 * -// Clear all apples
 	 * removeItem(player, "minecraft:apple");
 	 */
 	static removeItem(player, itemId, amount = 0) {

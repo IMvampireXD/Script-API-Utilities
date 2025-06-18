@@ -1,3 +1,7 @@
+
+// contains messy and unnecessary functions
+
+
 /**
  * Returns true every tick as of the specified tick
  * @param {number} interval The interval in ticks (1 tick = 20 sec)

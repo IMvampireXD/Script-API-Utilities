@@ -1,4 +1,4 @@
-class ArrayUtils {
+export class ArrayUtils {
 	/**
 	 * Randomly shuffle the elements of an array.
 	 */

@@ -1,4 +1,4 @@
-class MathHelper {
+export class MathHelper {
 	/**
 	 * @param {number} x - The number that will be modified
 	 * @param {number} decimal - The number of decimal places to keep
@@ -34,7 +34,7 @@ class MathHelper {
 	}
 }
 
-class AngleUtils {
+export class AngleUtils {
 	/**
 	 * Finds the X-Z angle (yaw) between to Vectors. 0 degrees is at Z
 	 * @param {import("@minecraft/server").Vector3} a
@@ -89,7 +89,7 @@ class AngleUtils {
  * @license MIT
  * @description set of useful random functions (int, float, range, chance, get, weighted).
  */
-class Random {
+export class Random {
 	constructor() {
 		throw new Error("Random is a static utility class and cannot be instantiated.");
 	}
@@ -165,7 +165,7 @@ class Random {
  * @author https://github.com/IWantANeko
  * @license MIT
  */
-class NumberRange {
+export class NumberRange {
 	/**
 	 * @param {number} min - The minimum value of the range.
 	 * @param {number} max - The maximum value of the range.

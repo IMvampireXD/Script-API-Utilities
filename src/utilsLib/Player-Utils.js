@@ -8,71 +8,80 @@ import {
 	ItemStack,
 } from "@minecraft/server";
 
-/**
- * Checks if player is in creative mode.
- * @param {Player} player The player to check
- * @returns {boolean}
- * @example
- * import { world } from "@minecraft/server"
- * import { PlayerUtils } from "./utilities/player-utilities";
- *
- * const player = world.getPlayers()[0];
- * if (PlayerUtils.isCreative(player)) {
- *  world.sendMessage(`${player.name} is in creative!`)
- * };
- */
-export const isCreative = (player) =>
-	player.getGameMode() === (GameMode.creative || GameMode.Creative);
-
-/**
- * Checks if player is in survival mode.
- * @param {Player} player The player to check
- * @returns {boolean}
- * @example
- * import { world } from "@minecraft/server"
- * import { PlayerUtils } from "./utilities/player-utilities";
- *
- * const player = world.getPlayers()[0];
- * if (PlayerUtils.isSurvival(player)) {
- *  world.sendMessage(`${player.name} is in survival!`)
- * };
- */
-export const isSurvival = (player) =>
-	player.getGameMode() === (GameMode.survival || GameMode.Survival);
-
-/**
- * Checks if player is in Spectator mode.
- * @param {Player} player The player to check
- * @returns {boolean}
- * @example
- * import { world } from "@minecraft/server"
- * import { PlayerUtils } from "./utilities/player-utilities";
- *
- * const player = world.getPlayers()[0];
- * if (PlayerUtils.isSpectator(player)) {
- *  world.sendMessage(`${player.name} is in Spectator!`)
- * };
- */
-export const isSpectator = (player) =>
-	player.getGameMode() === (GameMode.spectator || GameMode.Spectator);
-
-/**
- * Checks if player is in Adventure mode.
- * @param {Player} player The player to check
- * @returns {boolean}
- * @example
- * import { world } from "@minecraft/server"
- * import { PlayerUtils } from "./utilities/player-utilities";
- *
- * const player = world.getPlayers()[0];
- * if (PlayerUtils.isAdventure(player)) {
- *  world.sendMessage(`${player.name} is in Adventure!`)
- * };
- */
-export const isAdventure = (player) =>
-	player.getGameMode() === (GameMode.adventure || GameMode.Adventure);
-
 export class PlayerUtils {
+
+	/**
+	 * Checks if player is in creative mode.
+	 * @param {Player} player The player to check
+	 * @returns {boolean}
+	 * @example
+	 * import { world } from "@minecraft/server"
+	 * import { PlayerUtils } from "./utilities/player-utilities";
+	 *
+	 * const player = world.getPlayers()[0];
+	 * if (PlayerUtils.isCreative(player)) {
+	 *  world.sendMessage(`${player.name} is in creative!`)
+	 * };
+	 */
+	static isCreative(player) {
+		const gm = player.getGameMode();
+		return gm === GameMode.creative || gm === GameMode.Creative;
+	}
+
+	/**
+	 * Checks if player is in survival mode.
+	 * @param {Player} player The player to check
+	 * @returns {boolean}
+	 * @example
+	 * import { world } from "@minecraft/server"
+	 * import { PlayerUtils } from "./utilities/player-utilities";
+	 *
+	 * const player = world.getPlayers()[0];
+	 * if (PlayerUtils.isSurvival(player)) {
+	 *  world.sendMessage(`${player.name} is in survival!`)
+	 * };
+	 */
+	static isSurvival(player) {
+		const gm = player.getGameMode()
+		return gm === GameMode.survival || gm === GameMode.Survival;
+	}
+
+	/**
+	 * Checks if player is in Spectator mode.
+	 * @param {Player} player The player to check
+	 * @returns {boolean}
+	 * @example
+	 * import { world } from "@minecraft/server"
+	 * import { PlayerUtils } from "./utilities/player-utilities";
+	 *
+	 * const player = world.getPlayers()[0];
+	 * if (PlayerUtils.isSpectator(player)) {
+	 *  world.sendMessage(`${player.name} is in Spectator!`)
+	 * };
+	 */
+	static isSpectator(player) {
+		const gm = player.getGameMode()
+		return gm === GameMode.spectator || gm === GameMode.Spectator;
+	}
+
+	/**
+	 * Checks if player is in Adventure mode.
+	 * @param {Player} player The player to check
+	 * @returns {boolean}
+	 * @example
+	 * import { world } from "@minecraft/server"
+	 * import { PlayerUtils } from "./utilities/player-utilities";
+	 *
+	 * const player = world.getPlayers()[0];
+	 * if (PlayerUtils.isAdventure(player)) {
+	 *  world.sendMessage(`${player.name} is in Adventure!`)
+	 * };
+	 */
+	static isAdventure(player) {
+		const gm = player.getGameMode()
+		return gm === GameMode.adventure || gm === GameMode.Adventure;
+	}
+
 	/**
 	 * @author NaKer
 	 * Allows to use applyImpulse on player.

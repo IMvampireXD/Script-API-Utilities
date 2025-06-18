@@ -122,3 +122,4 @@ class TimeUtils {
 }
 
 export default TimeUtils;
+export {TimeUtils}

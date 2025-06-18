@@ -1,5 +1,4 @@
-class NumberUtils {
-
+export class NumberUtils {
 	/**
 	 * Check if the value is a float (example- 1.1, 3.6 are float values)
 	 * @returns {boolean}
