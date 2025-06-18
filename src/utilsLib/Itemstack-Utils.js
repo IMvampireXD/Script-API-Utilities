@@ -259,7 +259,7 @@ export class ItemStackUtils {
 	 * @example
 	 * import { world } from '@minecraft/server';
 	 *
-	 * //Get shulker contents
+	 * -//Get shulker contents
 	 * world.afterEvents.itemUse.subscribe((evd)=>{
 	 * 	const player = evd.source;
 	 *     if (evd.itemStack.typeId.endsWith("shulker_box")) {

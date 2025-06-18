@@ -78,7 +78,6 @@ export class InventoryUtils {
 	static addItem(player, itemId, amount = 1, data = {}) {
 		const container = InventoryUtils.getInventory(player);
 		const itemStack = new ItemStack(itemId, amount);
-		// Apply custom data if provided
 		if (data.nameTag) itemStack.nameTag = data.nameTag;
 		if (data.lore) itemStack.setLore(data.lore);
 		if (data.enchantments) {

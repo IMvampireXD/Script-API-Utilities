@@ -6,7 +6,6 @@ export class ArrayUtils {
 	 * @param {Array} array - The array to shuffle.
 	 * @returns {Array} A new array with elements shuffled randomly.
 	 */
-
 	static shuffleArray(array) {
 		const result = [...array];
 		for (let i = result.length - 1; i > 0; i--) {

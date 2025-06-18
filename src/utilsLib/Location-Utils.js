@@ -37,8 +37,7 @@ export class LocationUtils {
 			Math.floor(pos1.x) === Math.floor(pos2.x) &&
 			Math.floor(pos1.y) === Math.floor(pos2.y) &&
 			Math.floor(pos1.z) === Math.floor(pos2.z)
-		)
-			return true;
+		) return true;
 		else return false;
 	}
 

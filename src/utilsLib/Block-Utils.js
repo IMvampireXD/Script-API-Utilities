@@ -29,20 +29,13 @@ export class BlockUtils {
 		});
 	}
 
-
-/*************  ✨ Windsurf Command ⭐  *************/
 	/**
-	 * Finds all blocks of the same type as the given block that are connected to the given block.
-	 * This function will search up to `maxSearch` blocks away from the given block.
+	 * Get the surrounding blocks connected to a block.
+	 * 
 	 * @param {Block} block The block to start searching from.
-	 * @param {(block: Block) => boolean} [filter] A function that takes a block as an argument and returns a boolean.
-	 * If the function returns true, the block will be added to the result array.
+	 * @param {(block: Block) => boolean} [filter] A function that takes a block as an argument and returns a boolean. If the function returns true, the block will be added to the result array.
 	 * @param {number} [maxSearch] The maximum number of blocks to search. If not specified, will search all connected blocks.
 	 * @returns {Block[]}
-	 * @example
-	 * const stone = world.getBlock(Vector3(0, 0, 0));
-	 * const connectedStones = getNearbyBlocks(stone, (block) => block.typeId === "minecraft:stone", 10);
-	 * console.log(connectedStones); // [stone, stone, stone, ...]
 	 * 
 	 * @example
 	 * world.beforeEvents.playerBreakBlock.subscribe(({ block, itemStack }) => {
@@ -58,7 +51,7 @@ export class BlockUtils {
 	 * })
 	 *
 	 */
-/*******  52111be2-e9be-419b-b388-25721db33c67  *******/ static getNearbyBlocks(block, filter, maxSearch) {
+	static getNearbyBlocks(block, filter, maxSearch) {
 		function vec3(x, y, z) {
 			return {
 				x,
@@ -130,16 +123,12 @@ export class BlockUtils {
 		return connectedBlocks;
 	}
 
-/*************  ✨ Windsurf Command ⭐  *************/
 	/**
-	 * Retrieves the redstone power level of a specified block. If the block itself has no power,
-	 * the function checks adjacent blocks in the cardinal directions and below for power, excluding
-	 * certain redstone components. It also checks for power from a daylight detector above the block.
+	 * Retrieves the redstone power level of a specified block.
+	 * 
 	 * @param {Block} block - The block for which to determine the redstone power level.
 	 * @returns {number} The redstone power level of the block or its surroundings.
 	 */
-
-/*******  383e6a05-5c9a-4259-b015-5f890196bac6 *******/
 	static getRedstonePower(block) {
 		const blockRedstonePower = block.getRedstonePower();
 		if (blockRedstonePower == 0) {
@@ -259,7 +248,6 @@ export class BlockUtils {
 		const { brokenBlockPermutation, block, dimension } = startBlock;
 		const typeId = brokenBlockPermutation.type.id;
 		const item = new ItemStack(typeId, 1);
-		// Calculate the bounds of the volume to reduce overhead
 		const halfWidth = Math.floor(volumeWidth / 2);
 		const halfHeight = Math.floor(volumeHeight / 2);
 		const halfDepth = Math.floor(volumeDepth / 2);
@@ -269,13 +257,12 @@ export class BlockUtils {
 		const maxX = block.location.x + halfWidth;
 		const maxY = block.location.y + halfHeight;
 		const maxZ = block.location.z + halfDepth;
-		// Iterate directly within the volume bounds
 		for (let x = minX; x <= maxX; x++) {
 			for (let y = minY; y <= maxY; y++) {
 				for (let z = minZ; z <= maxZ; z++) {
 					const location = { x, y, z };
 					const currentBlock = dimension.getBlock(location);
-					dimension.setBlockType(location, replacementBlockType); // Replace with the specified block type
+					dimension.setBlockType(location, replacementBlockType);
 					dimension.spawnItem(item, location);
 				}
 			}
