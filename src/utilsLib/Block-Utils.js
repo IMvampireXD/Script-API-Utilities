@@ -2,7 +2,10 @@ import { ItemStack, world, Player, Block } from "@minecraft/server";
 
 export class BlockUtils {
 	/**
-	 * @param {string} blockTypeId
+	 * Cancels the breaking of a specific block type.
+	 * @param {string} blockTypeId The type ID of the block to cancel breaking of.
+	 * @example
+	 * cancelBlockBreaking("minecraft:stone");
 	 */
 	static cancelBlockBreaking(blockTypeId) {
 		world.beforeEvents.playerBreakBlock.subscribe(({ block, cancel }) => {
@@ -13,7 +16,10 @@ export class BlockUtils {
 	}
 
 	/**
-	 * @param {string} blockTypeId
+	 * Cancels the placement of a specific block type.
+	 * @param {string} blockTypeId The type ID of the block to cancel placement of.
+	 * @example
+	 * cancelBlockPlacing("minecraft:stone");
 	 */
 	static cancelBlockPlacing(blockTypeId) {
 		world.beforeEvents.playerPlaceBlock.subscribe(({ block, cancel }) => {
@@ -23,13 +29,21 @@ export class BlockUtils {
 		});
 	}
 
+
+/*************  ✨ Windsurf Command ⭐  *************/
 	/**
-	 * Gets surrounding blocks connected to the current block.
-	 * @param {Block} block - Starting block.
-	 * @param {(block: Block) => boolean} filter - A filter to match desired blocks.
-	 * @param {number} maxSearch - Maximum number of blocks to search
-	 * @returns {Block[]} - Array of adjacent blocks.
-	 *
+	 * Finds all blocks of the same type as the given block that are connected to the given block.
+	 * This function will search up to `maxSearch` blocks away from the given block.
+	 * @param {Block} block The block to start searching from.
+	 * @param {(block: Block) => boolean} [filter] A function that takes a block as an argument and returns a boolean.
+	 * If the function returns true, the block will be added to the result array.
+	 * @param {number} [maxSearch] The maximum number of blocks to search. If not specified, will search all connected blocks.
+	 * @returns {Block[]}
+	 * @example
+	 * const stone = world.getBlock(Vector3(0, 0, 0));
+	 * const connectedStones = getNearbyBlocks(stone, (block) => block.typeId === "minecraft:stone", 10);
+	 * console.log(connectedStones); // [stone, stone, stone, ...]
+	 * 
 	 * @example
 	 * world.beforeEvents.playerBreakBlock.subscribe(({ block, itemStack }) => {
 	 *  if (itemStack?.typeId !== "minecraft:stick") return;
@@ -44,7 +58,7 @@ export class BlockUtils {
 	 * })
 	 *
 	 */
-	static getNearbyBlocks(block, filter, maxSearch) {
+/*******  52111be2-e9be-419b-b388-25721db33c67  *******/ static getNearbyBlocks(block, filter, maxSearch) {
 		function vec3(x, y, z) {
 			return {
 				x,
@@ -116,11 +130,16 @@ export class BlockUtils {
 		return connectedBlocks;
 	}
 
+/*************  ✨ Windsurf Command ⭐  *************/
 	/**
-	 * Gets redstone power of the block
-	 * @param {Block} block
-	 * @returns {number}
+	 * Retrieves the redstone power level of a specified block. If the block itself has no power,
+	 * the function checks adjacent blocks in the cardinal directions and below for power, excluding
+	 * certain redstone components. It also checks for power from a daylight detector above the block.
+	 * @param {Block} block - The block for which to determine the redstone power level.
+	 * @returns {number} The redstone power level of the block or its surroundings.
 	 */
+
+/*******  383e6a05-5c9a-4259-b015-5f890196bac6 *******/
 	static getRedstonePower(block) {
 		const blockRedstonePower = block.getRedstonePower();
 		if (blockRedstonePower == 0) {
@@ -149,10 +168,14 @@ export class BlockUtils {
 	 * Function to place a block directly above water.
 	 * @author GST378
 	 * @remarks MAKE SURE YOUR ITEM HAS THIS COMPONENT - "minecraft:liquid_clipped": true
-	 * @param {Player} player - The player placing the block.
-	 * @param {BlockPermutation} permutationToPlace - The block permutation to be placed.
-	 * @param {Vector3} location - The starting location to search for placement.
-	 * @returns {Block | undefined} - Returns the placed block or undefined if no block was placed.
+	 * Places a block above the water level at the specified location.
+	 * Will keep going up until it finds a non-water block or reaches the maximum height.
+	 * If the block above the water is air, it will replace it with the given permutation.
+	 * Will also decrement the item in the player's mainhand if the block is placed.
+	 * @param {Player} player
+	 * @param {BlockPermutation} permutationToPlace
+	 * @param {Vector3} location
+	 * @returns {Block} The block that was placed
 	 * @example
 	 * if (block.typeId !== 'minecraft:water') return;
 	 * if (itemStack.typeId === 'mc:example') {
@@ -185,11 +208,11 @@ export class BlockUtils {
 	}
 
 	/**
-	 * Replaces all blocks of a type in an area.
-	 * @param {Vector3} startPosition - Start corner of area
-	 * @param {Vector3} endPosition - End corner of area
-	 * @param {string} fromBlock - Block typeID to replace
-	 * @param {string} toBlock - New block typeID
+	 * Replace blocks in a 3D area defined by two positions.
+	 * @param {Vector3} startPosition The starting position of the area.
+	 * @param {Vector3} endPosition The ending position of the area.
+	 * @param {string} fromBlock The type ID of the block to replace.
+	 * @param {string} toBlock The type ID of the block to replace with.
 	 */
 	static replaceBlocksInArea(startPosition, endPosition, fromBlock, toBlock) {
 		const minX = Math.min(startPosition.x, endPosition.x);
