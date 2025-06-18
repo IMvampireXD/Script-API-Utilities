@@ -9,26 +9,6 @@ import {
 } from "@minecraft/server";
 
 export class ItemStackUtils {
-	/**
-	 * Copies all relevant data from one itemStack to another.
-	 * @param {ItemStack} item The source item
-	 * @param {ItemStack} nextItem The item to copy info into
-	 * @returns {ItemStack} The modified item
-	 */
-	static cloneItemStackInfo(item, nextItem) {
-		nextItem.nameTag = item.nameTag;
-		nextItem.amount = item.amount;
-		nextItem.keepOnDeath = item.keepOnDeath;
-		nextItem.lockMode = item.lockMode;
-		nextItem.setCanDestroy(item?.getCanDestroy());
-		nextItem.setLore(item?.getLore());
-		const durability1 = item?.getComponent("durability");
-		const durability2 = nextItem?.getComponent("durability");
-		durability2.damage = durability1.damage;
-		ItemStackUtils.applyEnchantments(nextItem, ItemStackUtils.getEnchantments(item));
-
-		return nextItem;
-	}
 
 	/**
 	 * Creates a custom ItemStack with additional data (nameTag, lore, enchantments, and durability)
@@ -48,7 +28,7 @@ export class ItemStackUtils {
 	 *   nameTag: "Epic Sword",
 	 *   lore: ["Sharp and shiny", "Level 3"],
 	 *   enchantments: { "minecraft:sharpness": 3, "minecraft:unbreaking": 2 },
-	 *   durability: 10
+	 *   durabilityDamage: 10
 	 * });
 	 */
 	static createItemStack(itemId, amount = 1, data = {}) {
@@ -82,39 +62,70 @@ export class ItemStackUtils {
 	}
 
 	/**
-	 * Serializes an item stack for storage
-	 * @param {ItemStack} item
-	 * @returns {Object}
+	 * Stringifies an ItemStack, allowing to save the ItemStack data into dynamic property storage.
 	 */
-	static serializeItemStack(item) {
-		return {
-			typeId: item.typeId,
+	static stringifyItem(item) {
+		let json = {
+			type: item.typeId,
 			amount: item.amount,
+			keepOnDeath: item.keepOnDeath,
+			lockMode: item.lockMode,
 			nameTag: item.nameTag,
+			canDestroy: item.getCanDestroy(),
+			canPlaceOn: item.getCanPlaceOn(),
 			lore: item.getLore(),
+			properties: item.getDynamicPropertyIds().map(id => {
+				return {
+					id: id,
+					value: item.getDynamicProperty(id)
+				}
+			}),
 			durability: item.getComponent("minecraft:durability")?.damage,
-			enchantments: ItemStackUtils.getEnchantments(item),
-		};
+			dyeColor: item.getComponent("minecraft:dyeable")?.color,
+			enchantments: item.getComponent("minecraft:enchantable")?.getEnchantments() || []
+		}
+		return JSON.stringify(json)
 	}
 
 	/**
-	 * Deserializes an item stack from storage data
-	 * @param {Object} data
-	 * @returns {ItemStack}
+	 * Parses the data of an ItemStack, allowing to retrieve the stringified ItemStack.
 	 */
-	static deserializeItemStack(data) {
-		const itemStack = new ItemStack(data.typeId, data.amount);
-
-		if (data.nameTag) itemStack.nameTag = data.nameTag;
-		if (data.lore) itemStack.setLore(data.lore);
-		if (data.durability) {
-			itemStack.getComponent("minecraft:durability").damage = data.durability;
-		}
-		if (data.enchantments) {
-			ItemStackUtils.applyEnchantments(itemStack, data.enchantments);
+	static parseItem(json) {
+		if (typeof (json) == "string") {
+			json = JSON.parse(json)
 		}
 
-		return itemStack;
+		let item = new ItemStack(json.type, json.amount)
+		item.lockMode = json.lockMode
+		item.keepOnDeath = json.keepOnDeath
+		item.nameTag = json.nameTag
+
+		item.setCanDestroy(json.canDestroy)
+		item.setCanPlaceOn(json.canPlaceOn)
+		item.setLore(json.lore)
+
+		json.properties.forEach(property => {
+			item.setDynamicProperty(property.id, property.value)
+		})
+
+		if (item.getComponent("minecraft:durability")) {
+			item.getComponent("minecraft:durability").damage = json.durability
+		}
+
+		if (item.getComponent("minecraft:enchantable")) {
+			item.getComponent("minecraft:enchantable").addEnchantments(json.enchantments.map(enc => {
+				return {
+					level: enc.level,
+					type: new EnchantmentType(enc.type.id)
+				}
+			}))
+		}
+
+		if (item.getComponent("minecraft:dyeable")) {
+			item.getComponent("minecraft:dyeable").color = json.dyeColor
+		}
+
+		return item
 	}
 
 	/**
@@ -201,7 +212,7 @@ export class ItemStackUtils {
 	 */
 	static isBlock(itemStack) {
 		try {
-			BlockTypes?.get(itemStack?.typeId) !== undefined;
+			if (BlockTypes?.get(itemStack?.typeId)) return true;
 		} catch {
 			return false;
 		}
@@ -223,7 +234,6 @@ export class ItemStackUtils {
 	 * })
 	 */
 	static getWearableSlot(itemStack) {
-		//sacrifice random player >:D
 		const rPlayer = world.getPlayers()[0];
 		const equippable = rPlayer.getComponent("equippable");
 		const slots = ["Head", "Chest", "Legs", "Feet", "Offhand", "Mainhand"];
@@ -304,5 +314,121 @@ export class ItemStackUtils {
 				e.remove();
 				return itemStack;
 			});
+	}
+
+	/**
+	 * Compares two ItemStacks to determine if they match exactly.
+	 * @param {ItemStack} itemStack The first ItemStack to compare.
+	 * @param {ItemStack} otherItemStack The second ItemStack to compare against.
+	 * @param {boolean} [compareAmount=false] Whether to compare the amount of items.
+	 * @returns {boolean} True if the ItemStacks match exactly, otherwise false.
+	 */
+	static compareItemStacks(itemStack, otherItemStack, compareAmount = false) {
+
+		//ID and Name
+		if (itemStack.typeId !== otherItemStack.typeId) return false;
+		if (itemStack.nameTag !== otherItemStack.nameTag) return false;
+
+		if (compareAmount) {
+			if (itemStack.amount !== otherItemStack.amount) return false;
+		} else {
+			//Check if they can simply stack
+			if (itemStack.isStackable) return itemStack.isStackableWith(otherItemStack);
+		}
+
+		//Item Other NBT
+		if (itemStack.keepOnDeath !== otherItemStack.keepOnDeath) return false;
+		if (itemStack.lockMode !== otherItemStack.lockMode) return false;
+
+		//Lore
+		const itemStackLore = itemStack.getLore();
+		const otherItemStackLore = otherItemStack.getLore();
+		if (itemStackLore.length !== otherItemStackLore.length ||
+			!itemStackLore.every((e, i) => e === otherItemStackLore[i])) return false;
+
+		//Item Tags
+		const itemStackTags = itemStack.getTags();
+		const otherItemStackTags = otherItemStack.getTags();
+		if (itemStackTags.length !== otherItemStackTags.length) return false;
+		if (itemStackTags.length !== otherItemStackTags.length ||
+			!itemStackTags.every((e, i) => e === otherItemStackTags[i])) return false;
+
+		//Components
+		const itemStackComponents = itemStack.getComponents();
+		const otherItemStackComponents = otherItemStack.getComponents();
+		if (itemStackComponents.length !== otherItemStackComponents.length) return false;
+		for (let i = 0; i < itemStackComponents.length; i++) {
+			const component = itemStackComponents[i];
+			const otherComponent = otherItemStackComponents[i];
+			switch (component.typeId) {
+				case "minecraft:cooldown":
+					if (component.cooldownCategory !== otherComponent.cooldownCategory) return false;
+					if (component.cooldownTicks !== otherComponent.cooldownTicks) return false;
+					break;
+				case "minecraft:durability":
+					if (component.damage !== otherComponent.damage) return false;
+					if (component.maxDurability !== otherComponent.maxDurability) return false;
+					break;
+				case "minecraft:enchantable":
+					const enchants = component.getEnchantments();
+					const otherEnchants = otherComponent.getEnchantments();
+					if (enchants.length !== otherEnchants.length) return false;
+					if (enchants.length > 0) {
+						for (let i = 0; i < enchants.length; i++) {
+							if (enchants[i].type !== otherEnchants[i].type) return false;
+							if (enchants[i].level !== otherEnchants[i].level) return false;
+						}
+					}
+					break;
+				case "minecraft:food":
+					if (component.canAlwaysEat !== otherComponent.canAlwaysEat) return false;
+					if (component.nutrition !== otherComponent.nutrition) return false;
+					if (component.saturationModifier !== otherComponent.saturationModifier) return false;
+					if (component.usingConvertsTo !== otherComponent.usingConvertsTo) return false;
+					break;
+				case "minecraft:potion":
+					if (component.potionEffectType.id !== otherComponent.potionEffectType.id) return false;
+					if (component.potionLiquidType.id !== otherComponent.potionLiquidType.id) return false;
+					if (component.potionModifierType.id !== otherComponent.potionModifierType.id) return false;
+					break;
+			}
+		}
+
+		//Dynamic Properties
+		const itemStackDPs = itemStack.getDynamicPropertyIds();
+		const otherItemStackDPs = otherItemStack.getDynamicPropertyIds();
+		if (itemStackDPs.length !== otherItemStackDPs.length) return false;
+
+		for (const id of itemStackDPs) {
+			const prop1 = itemStack.getDynamicProperty(id);
+			const prop2 = otherItemStack.getDynamicProperty(id);
+			if (typeof prop1 !== typeof prop2) return false;
+
+			if (typeof prop1 === 'object' && prop1 !== undefined) return prop1.x == prop2.x && prop1.y == prop2.y && prop1.z == prop2.z;
+
+			if (prop1 !== prop2) return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Copies all relevant data from one itemStack to another.
+	 * @param {ItemStack} item The source item
+	 * @param {ItemStack} nextItem The item to copy info into
+	 * @returns {ItemStack} The modified item
+	 */
+	static cloneItemStackInfo(item, nextItem) {
+		nextItem.nameTag = item.nameTag;
+		nextItem.amount = item.amount;
+		nextItem.keepOnDeath = item.keepOnDeath;
+		nextItem.lockMode = item.lockMode;
+		nextItem.setCanDestroy(item?.getCanDestroy());
+		nextItem.setLore(item?.getLore());
+		const durability1 = item?.getComponent("durability");
+		const durability2 = nextItem?.getComponent("durability");
+		durability2.damage = durability1.damage;
+		ItemStackUtils.applyEnchantments(nextItem, ItemStackUtils.getEnchantments(item));
+
+		return nextItem;
 	}
 }
