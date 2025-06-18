@@ -358,12 +358,13 @@ export class PlayerUtils {
 	 * import { world } from "@minecraft/server"
 	 *
 	 * const player = world.getPlayers()[0];
-	 * const isRidingPlayer = isRidingEntity(player, "minecraft:horse");
+	 * const isRidingHorse = isRidingEntity(player, "minecraft:horse");
+	 * const isRiding = isRidingEntity(player, "any");
 	 * 
 	 * @throws If player is not a Player.
 	 */
 	static isRidingEntity(player, entityType = "any") {
-		if (!player?.isValid) throw new Error("Invalid player.");
+		if (!player?.isValid) console.warn("Invalid player.");
 		const riding = player.getComponent("riding");
 		const isRiding = riding?.entityRidingOn;
 

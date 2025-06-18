@@ -1,6 +1,6 @@
 // To-do list //
 
 - add more functions
-- divide all functions perfectly into categories then remove utilities.js
-- last, but not least, create classes for each category and move functions to static
+- divide all functions perfectly into categories then remove __temporary_utilities.js
+- create classes for each category, move functions to static, and export the classes - done ✔️
 - give use-cases for each static as @example
