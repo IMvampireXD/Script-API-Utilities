@@ -316,3 +316,47 @@ system.runInterval(() => {
 		}
 	}
 });
+
+
+/**
+ * @description Creates a proxy object to manage the target's scores in the Minecraft scoreboard.
+ * @example
+ * ```js
+ * const playerScore = scores(player);
+ *  console.log(playerScore.money);             // Get player's 'money' score 
+ * playerScore['money'] = 10;                   // Set player's 'money' score 
+ *  console.log(playerScore['money']);          // Should now log 10
+ * delete playerScore['money'];                 // Remove score for 'money'
+ *  console.log('money' in playerScore);        // Check if 'money' exists
+ *  console.log(playerScore[Symbol('money')]);  // same as playerScore.money and should log 0
+ * playerScore.money += 20;                     // Adds 20 'money' score to the player
+ * playerScore.money -= 10;                     // Subtracts 10 'money' score from the player
+ * playerScore.money *= 2;                      // Multiplies 'money' score by 2
+ *  console.log(playerScore.money);             // Should now log 20
+ * ```
+ * @remarks
+ * - May cuase inaccuracy with float number.
+ * - The `target` can be a player, entity, or a string.
+ * @author `Remember M9`  22/07/2025
+ */
+export const scores = (() => {
+    const sb = mc.world.scoreboard, map = new Map(), getObjective = o =>
+        (map.get(typeof o !== "symbol" ? o : (o = o.description)))?.isValid ? map.get(o)
+            : map.set(o, sb.getObjective(o) ?? sb.addObjective(o, o)).get(o);
+    /**
+     * @returns {{[objective:string]:number}} A proxy object that allows checking, getting, setting, and deleting target's score.
+     * @param {Player|Entity|string} target - The target whose score is to be managed.
+     **/
+    return target => {
+        const identity = map.get(target)?.isValid ? map.get(target)
+            : (map.set(target, target?.constructor === String
+                ? sb.getParticipants().findLast(p => p.type !== "Player" && p.displayName === target)
+                : target.scoreboardIdentity).get(target));
+        return new Proxy(Object.create(null), {
+            has: (_, obj) => getObjective(obj).hasParticipant(identity ?? (target || "")),
+            get: (_, obj) => (!identity ? 0 : getObjective(obj).getScore(identity ?? (target || "")) ?? 0),
+            set: (_, obj, score) => (getObjective(obj).setScore(identity ?? (target || ""), score), true),
+            deleteProperty: (_, obj) => (getObjective(obj).removeParticipant(identity ?? (target || "")), true)
+        })
+    }
+})();
