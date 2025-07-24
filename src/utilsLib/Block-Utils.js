@@ -1,4 +1,6 @@
-import { ItemStack, world, Player, Block } from "@minecraft/server";
+import * as mc from "@minecraft/server";
+
+const { ItemStack, world } = mc;
 
 export class BlockUtils {
 	/**
@@ -32,10 +34,10 @@ export class BlockUtils {
 	/**
 	 * Get the surrounding blocks connected to a block.
 	 * 
-	 * @param {Block} block The block to start searching from.
-	 * @param {(block: Block) => boolean} [filter] A function that takes a block as an argument and returns a boolean. If the function returns true, the block will be added to the result array.
+	 * @param {mc.Block} block The block to start searching from.
+	 * @param {(block: mc.Block) => boolean} [filter] A function that takes a block as an argument and returns a boolean. If the function returns true, the block will be added to the result array.
 	 * @param {number} [maxSearch] The maximum number of blocks to search. If not specified, will search all connected blocks.
-	 * @returns {Block[]}
+	 * @returns {mc.Block[]}
 	 * 
 	 * @example
 	 * world.beforeEvents.playerBreakBlock.subscribe(({ block, itemStack }) => {
@@ -126,7 +128,7 @@ export class BlockUtils {
 	/**
 	 * Retrieves the redstone power level of a specified block.
 	 * 
-	 * @param {Block} block - The block for which to determine the redstone power level.
+	 * @param {mc.Block} block - The block for which to determine the redstone power level.
 	 * @returns {number} The redstone power level of the block or its surroundings.
 	 */
 	static getRedstonePower(block) {
@@ -161,10 +163,10 @@ export class BlockUtils {
 	 * Will keep going up until it finds a non-water block or reaches the maximum height.
 	 * If the block above the water is air, it will replace it with the given permutation.
 	 * Will also decrement the item in the player's mainhand if the block is placed.
-	 * @param {Player} player
-	 * @param {BlockPermutation} permutationToPlace
-	 * @param {Vector3} location
-	 * @returns {Block} The block that was placed
+	 * @param {mc.Player} player
+	 * @param {mc.BlockPermutation} permutationToPlace
+	 * @param {mc.Vector3} location
+	 * @returns {mc.Block} The block that was placed
 	 * @example
 	 * if (block.typeId !== 'minecraft:water') return;
 	 * if (itemStack.typeId === 'mc:example') {
@@ -198,8 +200,8 @@ export class BlockUtils {
 
 	/**
 	 * Replace blocks in a 3D area defined by two positions.
-	 * @param {Vector3} startPosition The starting position of the area.
-	 * @param {Vector3} endPosition The ending position of the area.
+	 * @param {mc.Vector3} startPosition The starting position of the area.
+	 * @param {mc.Vector3} endPosition The ending position of the area.
 	 * @param {string} fromBlock The type ID of the block to replace.
 	 * @param {string} toBlock The type ID of the block to replace with.
 	 */
@@ -227,7 +229,7 @@ export class BlockUtils {
 	/**
 	 * Breaks blocks from start block with a specified Width, Height, Depth.
 	 * @author kiro_one
-	 * @param {Block} startBlock The block to start breaking from
+	 * @param {mc.Block} startBlock The block to start breaking from
 	 * @param {number} volumeWidth The width of the volume
 	 * @param {number} volumeHeight The height of the volume
 	 * @param {number} volumeDepth The depth of the volume
@@ -390,4 +392,31 @@ export class BlockUtils {
 			callback.cancel == true;
 		});
 	}
-}
+
+	/**
+	 * Get all components of a block.
+	 * 
+	 * @example
+	 * const components = BlockUtils.getComponents(block);
+	 * console.log(components.map(c => c.typeId));
+	 * @author `Remember M9`
+	 **/
+	static getComponents = (() => {
+		const components = Reflect.ownKeys(mc).reduce((list, key) => {
+			if (/Block\w+Component$/.test(key)) {
+				if (key = mc[key].componentId) {
+					list.push(key);
+				}
+			}
+			return list;
+		}, []);
+		/**
+		 * @param {mc.Block} block The block to get components from.
+		 * @returns {mc.BlockComponent[]}
+		 **/
+		return block => components.reduce((a, b) => (((b = block.getComponent(b)) && a.push(b)), a), []);
+	})()
+
+};
+
+
