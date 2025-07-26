@@ -335,9 +335,9 @@ system.runInterval(() => {
  *  console.log(playerScore.money);             // Should now log 20
  * ```
  * @remarks
- * - May cuase inaccuracy with float number.
+ * - May cause inaccuracy with floating-point numbers.
  * - The `target` can be a player, entity, or a string.
- * @author `Remember M9`  22/07/2025
+ * @author `Remember M9`  26/07/2025
  */
 export const scores = (() => {
     const sb = mc.world.scoreboard, map = new Map(), getObjective = o =>
@@ -349,7 +349,7 @@ export const scores = (() => {
      **/
     return target => {
         const identity = map.get(target)?.isValid ? map.get(target)
-            : (map.set(target, target?.constructor === String
+            : (map.set(target, typeof target == "string"
                 ? sb.getParticipants().findLast(p => p.type !== "Player" && p.displayName === target)
                 : target.scoreboardIdentity).get(target));
         return new Proxy(Object.create(null), {
