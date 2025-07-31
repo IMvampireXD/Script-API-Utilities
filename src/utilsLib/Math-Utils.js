@@ -1,5 +1,14 @@
-export class MathHelper {
+export class MathUtils {
 
+	static roundToNearestQuarter(value) {
+    		return ((value * 4 + 0.5) | 0) / 4;
+  	}
+
+  	static roundToDecimal(value, decimalPlaces) {
+    		const multiplier = 10**decimalPlaces;
+    		return Math.round(value * multiplier) / multiplier;
+  	}
+	
 	// dist/minecraft-math.js -> lib/general/clamp.js
 	static clampNumber(val, min, max) {
 		return Math.min(Math.max(val, min), max);
