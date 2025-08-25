@@ -43,6 +43,14 @@ export class DimensionUtils {
 	}
 
 	/**
+	 * Get entities around a location.
+	 */
+	static getEntitiesInRadius(center, dimension, radius) {
+		const entities = world.getDimension(dimension).getEntities({ location: center, maxDistance: radius })
+		return entities ?? []
+	}
+
+	/**
 	 * Run multiple commands at once.
 	 *
 	 * @param {Dimension} dimension - The dimension to run commands.
