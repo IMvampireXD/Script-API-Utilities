@@ -10,11 +10,9 @@ export class BlockUtils {
 	 * cancelBlockBreaking("minecraft:stone");
 	 */
 	static cancelBlockBreaking(blockTypeId) {
-		world.beforeEvents.playerBreakBlock.subscribe(({ block, cancel }) => {
-			if (block?.typeId === blockTypeId) {
-				cancel = true;
-			}
-		});
+		world.beforeEvents.playerBreakBlock.subscribe(event => {
+			event.cancel = true;
+		}, { blockTypes: [blockTypeId] });
 	}
 
 	/**
@@ -24,11 +22,9 @@ export class BlockUtils {
 	 * cancelBlockPlacing("minecraft:stone");
 	 */
 	static cancelBlockPlacing(blockTypeId) {
-		world.beforeEvents.playerPlaceBlock.subscribe(({ block, cancel }) => {
-			if (block?.typeId === blockTypeId) {
-				cancel = true;
-			}
-		});
+		world.beforeEvents.playerPlaceBlock.subscribe(event => {
+			event.cancel = true;
+		}, { blockTypes: [blockTypeId] });
 	}
 
 	/**
@@ -269,6 +265,15 @@ export class BlockUtils {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Destroys a specified block, dropping its loot. Plays the block destroy particle/sound effects.
+	 * @param {mc.Block} block The block to destroy.
+	 */
+	static destroyBlock(block) {
+		const { dimension, location } = block;
+		dimension.runCommand(`setblock ${location.x} ${location.y} ${location.z} air destroy`);
 	}
 
 	/**
