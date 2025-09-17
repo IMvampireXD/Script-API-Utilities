@@ -1,4 +1,41 @@
-class TimeUtils {
+
+/**
+ * A simple class to measure the time it takes to perform an operation.
+ */
+export class Timings {
+	static lastTime = -1;
+	static lastOperation = '';
+
+	/**
+	 * Begin measuring the time it takes to perform an operation.
+	 * @remarks
+	 * If another operation is already being measured, the measurement will be ended.
+	 *
+	 * @param operation The name of the operation.
+	 */
+	static begin(operation) {
+		this.end();
+		this.lastTime = new Date().getTime();
+		this.lastOperation = operation;
+	}
+
+	/**
+	 * End measuring the time it takes to perform an operation and log the result.
+	 * @remarks
+	 * If no operation is being measured, this method will do nothing.
+	 */
+	static end() {
+		const time = new Date().getTime();
+		if (this.lastTime > 0) {
+			Timings.log.debug(
+				`Operation ${this.lastOperation} took ${time - this.lastTime}ms`
+			);
+		}
+		this.lastTime = -1;
+	}
+}
+
+export class TimeUtils {
 
 	/**
 	 * Delays execution for a number of game ticks.
@@ -26,10 +63,10 @@ class TimeUtils {
 	 * @param {number} milliseconds- Time in milliseconds.
 	 * @returns {number} Number of game ticks.
 	 * @example
-	 * MillisecondsToTicks(1000) // => 20
-	 * MillisecondsToTicks(500)  // => 10
+	 * fromMillisecondsToTicks(1000) // => 20
+	 * fromMillisecondsToTicks(500)  // => 10
 	 */
-	static MillisecondsToTicks(milliseconds) {
+	static fromMillisecondsToTicks(milliseconds) {
 		return Math.floor(milliseconds / (1000 / 20))
 	}
 
@@ -133,6 +170,3 @@ class TimeUtils {
 		return seconds * 20;
 	}
 }
-
-export default TimeUtils;
-export { TimeUtils }
