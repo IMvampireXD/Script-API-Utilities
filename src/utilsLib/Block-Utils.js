@@ -268,6 +268,15 @@ export class BlockUtils {
 	}
 
 	/**
+	 * Destroys a specified block, dropping its loot. Plays the block destroy particle/sound effects.
+	 * @param {mc.Block} block The block to destroy.
+	 */
+	static destroyBlock(block) {
+		const { dimension, location } = block;
+		dimension.runCommand(`setblock ${location.x} ${location.y} ${location.z} air destroy`);
+	}
+
+	/**
 	 * @author Dmahonjr06
 	 * @param {string} callback Your event 'callback' parameter
 	 * @param {property} block Your definition for 'event' property 'block'.
