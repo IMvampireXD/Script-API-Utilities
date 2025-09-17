@@ -8,7 +8,41 @@ import {
 	ItemStack,
 } from "@minecraft/server";
 
+export const CamShakeType = {
+	Positional: "positional",
+	Rotational: "rotational"
+}
+
 export class PlayerUtils {
+
+	/**
+	 * Adds camera shake effect to the specified player.
+	 * @param player - The player to apply the camera shake effect to.
+	 * @param type - The type of camera shake effect.
+	 * @param intensity - The intensity of the camera shake effect.
+	 * @param duration - The duration of the camera shake effect in seconds.
+	 */
+	static addCameraShake(
+		player,
+		shakeType,
+		intensity,
+		duration
+	) {
+		let gamerule = world.gameRules.sendCommandFeedback;
+		world.gameRules.sendCommandFeedback = false;
+		player.runCommand(
+			`camerashake add @s ${intensity.toFixed(20)} ${duration.toFixed(20)} ${shakeType}`
+		);
+		world.gameRules.sendCommandFeedback = gamerule;
+	}
+
+	/**
+	 * Stops the camera shake for the specified player.
+	 * @param player The player for whom to stop the camera shake.
+	 */
+	static stopCameraShake(player) {
+		player.runCommand(`camerashake stop @s`);
+	}
 
 	/**
 	 * Checks if player is in creative mode.

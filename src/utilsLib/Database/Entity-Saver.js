@@ -1,0 +1,1 @@
+// An Entity Database which saves entities into strucutres and loads the entity from structure.
