@@ -14,4 +14,19 @@ export class ArrayUtils {
 		}
 		return result;
 	}
+
+	/**
+	 * Removes an element from an array at a specified index by using the swap-pop technique:
+	 * swaps it with the last element, then pops (O(1)). Order is NOT preserved.
+	 * @param {Array} array - The array to remove an element from.
+	 * @param {number} index - The index of the element to remove.
+	 * @returns {boolean} `true` if an element was removed, or `false` if index invalid.
+	 */
+	static swapPop(array, index) {
+		const lastIndex = array.length - 1;
+		if (index < 0 || index > lastIndex) return false;
+		if (lastIndex !== index) array[index] = array[lastIndex];
+		array.pop();
+		return true;
+	}
 }
