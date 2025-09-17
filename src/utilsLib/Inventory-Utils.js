@@ -1,4 +1,4 @@
-import { Player, EntityInventoryComponent, ItemStack } from "@minecraft/server";
+import { Player, EntityInventoryComponent, ItemStack, EnchantmentType } from "@minecraft/server";
 import { ItemStackUtils } from "./itemstack-utilities.js";
 
 export class InventoryUtils {
@@ -137,6 +137,7 @@ export class InventoryUtils {
 	 * - Lock mode
 	 * - Keep on death
 	 * - Amount
+	 * - Dynamic properties
 	 * @author trayeplays & Remember M9
 	 * @param {Player} player The player to save the inventory of
 	 * @param {string} [invName=player.name] Identifier of the dynamic property
@@ -169,6 +170,7 @@ export class InventoryUtils {
 				},
 				lore: equipment.getLore(),
 				components: {},
+				dynamicProperties: this.#saveItemDynamicProperties(equipment),
 			};
 			if (equipment.nameTag) data.props.nameTag = equipment.nameTag;
 			if (equipment.hasComponent("enchantable")) {
@@ -199,6 +201,7 @@ export class InventoryUtils {
 				},
 				lore: item.getLore(),
 				components: {},
+				dynamicProperties: this.#saveItemDynamicProperties(item),
 			};
 			if (item.nameTag) data.props.nameTag = item.nameTag;
 			if (item.hasComponent("enchantable")) {
@@ -256,6 +259,7 @@ export class InventoryUtils {
 				if (data.components.durability) {
 					item.getComponent("durability").damage = data.components.durability;
 				}
+				this.#setItemDynamicProperties(item, data.dynamicProperties);
 				equipment.setEquipment(listOfEquipmentSlots[i], item);
 			}
 		}
@@ -279,8 +283,42 @@ export class InventoryUtils {
 				if (data.components.durability) {
 					item.getComponent("durability").damage = data.components.durability;
 				}
+				this.#setItemDynamicProperties(item, data.dynamicProperties);
 				container.setItem(i, item);
 			}
 		}
 	}
+
+	/**
+	 * Saves the list of dynamic properties set on an item in an array.
+	 * @param {ItemStack} itemStack The ItemStack to save its properties.
+	 * @returns Array of item dynamic property tuples `[id, data]`.
+	 */
+	static #saveItemDynamicProperties(itemStack) {
+		const dynamicPropertyIds = itemStack.getDynamicPropertyIds();
+		const total = dynamicPropertyIds.length;
+
+		const dynamicProperties = [];
+		for (let i = 0; i < total; i++) {
+			const id = dynamicPropertyIds[i];
+			dynamicProperties.push([id, itemStack.getDynamicProperty(id)]);
+		}
+
+		return dynamicProperties;
+	}
+
+	/**
+	 * Retrieves a list of dynamic properties saved from an item and sets on it.
+	 * @param {ItemStack} itemStack The ItemStack to set the properties.
+	 * @param {[string, any][]} properties List of dynamic properties regarding this item.
+	 */
+	static #setItemDynamicProperties(itemStack, properties) {
+		const total = properties.length;
+		for (let i = 0; i < total; i++) {
+			const property = properties[i];
+			itemStack.setDynamicProperty(property[0], property[1]);
+		}
+	}
+
+	// More private helpers can be added here to avoid duplication. Like: #saveItemEnchantments, #getItemEnchantments... etc.
 }
