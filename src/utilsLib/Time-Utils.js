@@ -10,14 +10,27 @@ class TimeUtils {
 	}
 
 	/**
- 	 * Repeats a callback a specified number of times.
- 	 * @param {() => void} callback The function to run
- 	 * @param {number} times Number of times to run the function
- 	 */
+	 * Repeats a callback a specified number of times.
+	 * @param {() => void} callback The function to run
+	 * @param {number} times Number of times to run the function
+	 */
 	static repeat(callback, times) {
 		for (let i = 0; i < times; i++) {
 			callback();
 		}
+	}
+
+	/**
+	 * 
+	 * Convert milliseconds into game ticks.
+	 * @param {number} milliseconds- Time in milliseconds.
+	 * @returns {number} Number of game ticks.
+	 * @example
+	 * MillisecondsToTicks(1000) // => 20
+	 * MillisecondsToTicks(500)  // => 10
+	 */
+	static MillisecondsToTicks(milliseconds) {
+		return Math.floor(milliseconds / (1000 / 20))
 	}
 
 	/**
@@ -122,4 +135,4 @@ class TimeUtils {
 }
 
 export default TimeUtils;
-export {TimeUtils}
+export { TimeUtils }
