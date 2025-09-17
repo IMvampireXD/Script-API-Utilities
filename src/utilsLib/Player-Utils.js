@@ -83,13 +83,59 @@ export class PlayerUtils {
 	}
 
 	/**
-	 * @author NaKer
-	 * Allows to use applyImpulse on player.
-	 * @param {Vector3} vector
-	 * @param {Player} player
+	 * The current applyImpulse method is very buggy on players, so this is a new implementation
+	 * of applyImpulse. This one tries to replicate the behavior of
+	 * the normal impulse as much as possible.
+	 * 
+	 * @author Bedrock-OSS
+	 * @param entity The entity to apply the impulse to.
+	 * @param vector The vector of the impulse.
 	 */
-	static applyImpulse(player, vector) {
-		player.applyKnockback({ x: vector.x, z: vector.z }, vector.y < 0.0 ? 0.5 * vector.y : vector.y);
+	static applyImpulse(entity, vector) {
+		const { x, y, z } = vector;
+		const previousVelocity = entity.getVelocity();
+		const horizontalNorm = Math.sqrt(x * x + z * z);
+		let directionX = 0;
+		let directionZ = 0;
+		if (horizontalNorm !== 0) {
+			directionX = x / horizontalNorm;
+			directionZ = z / horizontalNorm;
+		}
+		const horizontalStrength = horizontalNorm * 2.5;
+		const verticalStrength = y + previousVelocity.y * 0.9;
+		entity.applyKnockback(
+			{
+				x: horizontalStrength * directionX,
+				z: horizontalStrength * directionZ,
+			},
+			verticalStrength
+		);
+	}
+
+	/**
+	 * The clearVelocity method does not work on players, so this is a workaround.
+	 * Clears the velocity of an entity. This applies a knockback with the opposite
+	 * direction and the same strength as the current velocity in horizontal direction.
+	 * 
+	 * @author Bedrock-OSS
+	 * @param entity The entity to clear the velocity of.
+	 */
+	static clearVelocity(entity) {
+		const { x, z } = entity.getVelocity();
+		const horizontalNorm = Math.sqrt(x * x + z * z);
+		let directionX = 0;
+		let directionZ = 0;
+		if (horizontalNorm !== 0) {
+			directionX = -x / horizontalNorm;
+			directionZ = -z / horizontalNorm;
+		}
+		entity.applyKnockback(
+			{
+				x: horizontalNorm * directionX,
+				z: horizontalNorm * directionZ,
+			},
+			0
+		);
 	}
 
 	/**
@@ -184,10 +230,10 @@ export class PlayerUtils {
 	}
 
 	/**
+	 * Gets the block the player is looking at.
+	 * 
 	 * @param {Player} player
 	 * @returns {Block} Block
-	 * @description Get the block the player is looking at.
-	 *
 	 */
 	static getBlockLookingAt(player, maxDistance) {
 		try {
@@ -199,9 +245,10 @@ export class PlayerUtils {
 	}
 
 	/**
+	 * Gets entity the player is looking at
+	 * 
 	 * @param {Player} player
 	 * @returns {Entity} Entity
-	 * @description Gets entity the player is looking at
 	 */
 	static getEntityLookingAt(player, maxDistance) {
 		try {
