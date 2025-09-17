@@ -1,14 +1,14 @@
 export class MathUtils {
 
 	static roundToNearestQuarter(value) {
-    		return ((value * 4 + 0.5) | 0) / 4;
-  	}
+		return ((value * 4 + 0.5) | 0) / 4;
+	}
 
-  	static roundToDecimal(value, decimalPlaces) {
-    		const multiplier = 10**decimalPlaces;
-    		return Math.round(value * multiplier) / multiplier;
-  	}
-	
+	static roundToDecimal(value, decimalPlaces) {
+		const multiplier = 10 ** decimalPlaces;
+		return Math.round(value * multiplier) / multiplier;
+	}
+
 	// dist/minecraft-math.js -> lib/general/clamp.js
 	static clampNumber(val, min, max) {
 		return Math.min(Math.max(val, min), max);
@@ -43,7 +43,7 @@ export class AngleUtils {
 		const dx = -a.x + b.x;
 		const dz = -a.z + b.z;
 
-		const angle = MathHelper.toDegrees(Math.atan2(dz, dx));
+		const angle = MathUtils.toDegrees(Math.atan2(dz, dx));
 
 		return angle;
 	}
@@ -60,7 +60,7 @@ export class AngleUtils {
 
 		const d = Math.sqrt(dx * dx + dz * dz);
 
-		const angle = MathHelper.toDegrees(Math.atan2(dy, d));
+		const angle = MathUtils.toDegrees(Math.atan2(dy, d));
 
 		return angle;
 	}
@@ -174,6 +174,18 @@ export class NumberRange {
 		this.min = min;
 		/** @readonly @type {number} */
 		this.max = max;
+	}
+
+	/**
+	 * Get a random integer within the range (inclusive).
+	 * @returns {number} Random integer between min and max.
+	 * @example
+	 * new NumberRange(1, 6).getRandomValue()
+	 */
+	getRandomValue() {
+		const min = Math.ceil(this.min);
+		const max = Math.floor(this.max);
+		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
 	/**

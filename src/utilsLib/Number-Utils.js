@@ -1,10 +1,31 @@
 export class NumberUtils {
+
 	/**
 	 * Check if the value is a float (example- 1.1, 3.6 are float values)
 	 * @returns {boolean}
 	 */
 	static isFloat(value) {
 		return typeof value === 'number' && Number.isFinite(value) && !Number.isInteger(value);
+	}
+
+	/**
+	 * Split a number into groups of a fixed size.
+	 * @param {number} sum - Total number.
+	 * @param {number} [groupSize=64] - Max per group.
+	 * @returns {number[]} Array of groups.
+	 * @example
+	 * splitGroups(65)     // => [64, 1]
+	 * splitGroups(140)    // => [64, 64, 12]
+	 * splitGroups(65, 16) // => [16, 16, 16, 16, 1]
+	 */
+	static splitGroups(sum, groupSize = 64) {
+		const groups = []
+		while (sum > 0) {
+			const group = Math.min(sum, groupSize)
+			groups.push(group)
+			sum -= group
+		}
+		return groups
 	}
 
 	/**
