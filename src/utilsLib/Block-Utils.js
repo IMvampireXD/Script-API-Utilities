@@ -211,7 +211,6 @@ export class BlockUtils {
 
 	/**
 	 * Replace blocks starting from a block with a specified Width, Height, Depth.
-	 * Uses fillBlocks to avoid item spawning.
 	 * @author kiro_one
 	 * @param {mc.Block} startBlock The block to start replacing from
 	 * @param {number} volumeWidth The width of the volume
@@ -222,36 +221,36 @@ export class BlockUtils {
 	 * import { world } from "@minecraft/server";
 	 *
 	 * const block = world.getDimension("overworld").getBlock({x: 0, y: 0, z: 0});
-	 * MyUtils.replaceBlocksFromStartBlock(block, 5, 5, 5, "minecraft:stone"); 
+	 * BlockUtils.replaceBlocksFromStartBlock(block, 5, 5, 5, "minecraft:stone");  // Fills a 5x5x5 cube with stone
 	 */
-static replaceBlocksFromStartBlock(
-	startBlock,
-	volumeWidth = 3,
-	volumeHeight = 3,
-	volumeDepth = 3,
-	replacementBlockType,
-) {
-	const { block, dimension } = startBlock;
+	static replaceBlocksFromStartBlock(
+		startBlock,
+		volumeWidth = 3,
+		volumeHeight = 3,
+		volumeDepth = 3,
+		replacementBlockType,
+	) {
+		const { block, dimension } = startBlock;
 
-	const halfWidth = Math.floor(volumeWidth / 2);
-	const halfHeight = Math.floor(volumeHeight / 2);
-	const halfDepth = Math.floor(volumeDepth / 2);
+		const halfWidth = Math.floor(volumeWidth / 2);
+		const halfHeight = Math.floor(volumeHeight / 2);
+		const halfDepth = Math.floor(volumeDepth / 2);
 
-	const min = {
-		x: block.location.x - halfWidth,
-		y: block.location.y - halfHeight,
-		z: block.location.z - halfDepth,
-	};
-	const max = {
-		x: block.location.x + halfWidth,
-		y: block.location.y + halfHeight,
-		z: block.location.z + halfDepth,
-	};
+		const min = {
+			x: block.location.x - halfWidth,
+			y: block.location.y - halfHeight,
+			z: block.location.z - halfDepth,
+		};
+		const max = {
+			x: block.location.x + halfWidth,
+			y: block.location.y + halfHeight,
+			z: block.location.z + halfDepth,
+		};
 
-	dimension.fillBlocks(new mc.BlockVolume(min, max), replacementBlockType, {
-		ignoreChunkBoundErrors: true,
-	});
-}
+		dimension.fillBlocks(new mc.BlockVolume(min, max), replacementBlockType, {
+			ignoreChunkBoundErrors: true,
+		});
+	}
 
 
 	/**
