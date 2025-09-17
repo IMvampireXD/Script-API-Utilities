@@ -195,31 +195,18 @@ export class BlockUtils {
 	}
 
 	/**
-	 * Replace blocks in a 3D area defined by two positions.
+	 * Replace blocks in a 3D loaded area of a dimension, defined by two positions.
+	 * @param {mc.Dimension} dimension The dimension to replace blocks in.
 	 * @param {mc.Vector3} startPosition The starting position of the area.
 	 * @param {mc.Vector3} endPosition The ending position of the area.
 	 * @param {string} fromBlock The type ID of the block to replace.
 	 * @param {string} toBlock The type ID of the block to replace with.
 	 */
-	static replaceBlocksInArea(startPosition, endPosition, fromBlock, toBlock) {
-		const minX = Math.min(startPosition.x, endPosition.x);
-		const minY = Math.min(startPosition.y, endPosition.y);
-		const minZ = Math.min(startPosition.z, endPosition.z);
-		const maxX = Math.max(startPosition.x, endPosition.x);
-		const maxY = Math.max(startPosition.y, endPosition.y);
-		const maxZ = Math.max(startPosition.z, endPosition.z);
-
-		for (let x = minX; x <= maxX; x++) {
-			for (let y = minY; y <= maxY; y++) {
-				for (let z = minZ; z <= maxZ; z++) {
-					const pos = { x, y, z };
-					const block = world.getDimension("overworld").getBlock(pos);
-					if (block && block.typeId === fromBlock) {
-						block.setType(toBlock);
-					}
-				}
-			}
-		}
+	static replaceBlocksInArea(dimension, startPosition, endPosition, fromBlock, toBlock) {
+		dimension.fillBlocks(new mc.BlockVolume(startPosition, endPosition), toBlock, {
+			ignoreChunkBoundErrors: true,
+			blockFilter: { includeTypes: [fromBlock] }
+		});
 	}
 
 	/**
