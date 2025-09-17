@@ -254,6 +254,33 @@ export class BlockUtils {
 
 
 	/**
+	 * Gets all the blocks that satisfy the filter in a 3D loaded area of a dimension.
+	 * @param {mc.Dimension} dimension The dimension to search for blocks in.
+	 * @param {mc.Vector3} from A location that represents a corner in a 3D rectangle.
+	 * @param {mc.Vector3} to A location that represents the opposite corner in a 3D rectangle.
+	 * @param {mc.BlockFilter} [filter] Block filter to check for.
+	 * @returns {mc.BlockLocationIterator} An iterator yielding all block locations within the volume that match the filter.
+	 */
+	static getBlocks(dimension, from, to, filter) {
+		const blockVolumeList = dimension.getBlocks(new mc.BlockVolume(from, to), filter, true);
+		return blockVolumeList.getBlockLocationIterator();
+	}
+
+	/**
+	 * Iterates over a BlockLocationIterator, calling the callback function for each block location.
+	 * If the callback returns `false`, iteration stops early.
+	 * @param {mc.BlockLocationIterator} iterator The iterator that yields block locations to be processed.
+	 * @param {(location: mc.Vector3) => boolean|void} callback The function to be called for each block location found.
+	 */
+	static forBlockIterator(iterator, callback) {
+		let result = iterator.next();
+		while (!result.done) {
+			if (callback(result.value) === false) break;
+			result = iterator.next();
+		}
+	}
+
+	/**
 	 * Destroys a specified block, dropping its loot. Plays the block destroy particle/sound effects.
 	 * @param {mc.Block} block The block to destroy.
 	 */
