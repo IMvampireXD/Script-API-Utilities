@@ -3,9 +3,13 @@ import {
 	Entity,
 	Block,
 	world,
+	Dimension,
 	EquipmentSlot,
 	GameMode,
 	ItemStack,
+	ItemComponentTypes,
+	EntityComponentTypes,
+	EntityEquippableComponent,
 } from "@minecraft/server";
 
 export const CamShakeType = {
@@ -481,5 +485,59 @@ export class PlayerUtils {
 			if (!isRiding) return false;
 			else if (isRiding.typeId === entityType) return true;
 		}
+	}
+
+	/**
+	 * Decrements the item stack from the player's main hand, unless playing in creative.
+	 * @author JeanLucasMCPE
+	 * @param {Player} player The player to decrement the main hand item stack.
+	 * @param {number} [amount=1] How much the item should decrement. Defaults to `1`.
+	 * @param {ItemStack} [itemStack] The item stack to decrement, if available. Otherwise, gets from main hand.
+	 * @param {EntityEquippableComponent} [equippable] The player's equippable component for quick access, if available.
+	 */
+	static decrementMainhandItemStack(player, amount = 1, itemStack = undefined, equippable = undefined) {
+		if (this.isCreative(player)) return;
+
+		equippable ??= player.getComponent(EntityComponentTypes.Equippable);
+		const handItem = itemStack || equippable?.getEquipment(EquipmentSlot.Mainhand);
+		if (!handItem) return;
+
+		const previousItemAmount = handItem.amount;
+		if (previousItemAmount > amount) handItem.amount -= amount;
+		equippable.setEquipment(EquipmentSlot.Mainhand, previousItemAmount > amount ? handItem : null);
+	}
+
+	/**
+	 * Damages the item stack player from the player's main hand, unless in creative, factoring in the Unbreaking enchantment level chance.
+	 * @author JeanLucasMCPE
+	 * @param {Player} player The player using the item.
+	 * @param {ItemStack} [itemStack] The item stack to damage, if available. Otherwise, gets from main hand.
+	 * @param {EntityEquippableComponent} [equippable] The player's equippable component for quick access, if available.
+	 * @param {Dimension} [dimension] The dimension for playing the item break sound if the item breaks (optional, if available).
+	 * @returns {boolean} `true` if the damaged item broke, `false` otherwise.
+	 */
+	static damageMainhandItemStack(player, itemStack = undefined, equippable = undefined, dimension = undefined) {
+		if (this.isCreative(player)) return false;
+
+		equippable ??= player.getComponent(EntityComponentTypes.Equippable);
+		let handItem = itemStack || equippable?.getEquipment(EquipmentSlot.Mainhand);
+		if (!handItem) return false;
+
+		const unbreakingLevel = handItem.getComponent(ItemComponentTypes.Enchantable)?.getEnchantment('unbreaking')?.level || 0;
+		const damageChance = 1 / (1 + unbreakingLevel);
+		if (Math.random() >= damageChance) return false;
+
+		const durability = handItem.getComponent(ItemComponentTypes.Durability);
+		if (!durability) return false;
+		const { damage, maxDurability } = durability;
+
+		if (damage < maxDurability) durability.damage++;
+		else {
+			handItem = null;
+			(dimension ?? player.dimension).playSound('random.break', player.location, { pitch: 0.9 });
+		}
+
+		equippable.setEquipment(EquipmentSlot.Mainhand, handItem);
+		return handItem == null;
 	}
 }
