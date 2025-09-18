@@ -6,6 +6,7 @@ import {
 	system,
 	EnchantmentType,
 	BlockTypes,
+	ItemComponentTypes
 } from "@minecraft/server";
 
 export class ItemStackUtils {
@@ -62,70 +63,90 @@ export class ItemStackUtils {
 	}
 
 	/**
-	 * Stringifies an ItemStack, allowing to save the ItemStack data into dynamic property storage.
+	 * Serializes an ItemStack, allowing to save the ItemStack data into dynamic property storage.
 	 */
-	static stringifyItem(item) {
-		let json = {
-			type: item.typeId,
-			amount: item.amount,
-			keepOnDeath: item.keepOnDeath,
-			lockMode: item.lockMode,
-			nameTag: item.nameTag,
-			canDestroy: item.getCanDestroy(),
-			canPlaceOn: item.getCanPlaceOn(),
-			lore: item.getLore(),
-			properties: item.getDynamicPropertyIds().map(id => {
-				return {
-					id: id,
-					value: item.getDynamicProperty(id)
-				}
-			}),
-			durability: item.getComponent("minecraft:durability")?.damage,
-			dyeColor: item.getComponent("minecraft:dyeable")?.color,
-			enchantments: item.getComponent("minecraft:enchantable")?.getEnchantments() || []
+	static stringifyItem(itemStack) {
+		const result = {
+			typeId: itemStack.typeId,
+			amount: itemStack.amount,
+			nameTag: itemStack.nameTag,
+			lockMode: itemStack.lockMode,
+			keepOnDeath: itemStack.keepOnDeath,
+			lore: itemStack.getLore(),
+			canPlaceOn: itemStack.getCanPlaceOn(),
+			canDestroy: itemStack.getCanDestroy(),
+			components: {},
+			dynamicProperties: {}
+		};
+		const enchantable = itemStack.getComponent(ItemComponentTypes.Enchantable);
+		if (enchantable) {
+			result.components.enchantments = enchantable.getEnchantments().map(e => ({
+				type: e.type.id,
+				level: e.level
+			}));
 		}
-		return JSON.stringify(json)
+		const durability = itemStack.getComponent(ItemComponentTypes.Durability);
+		if (durability) {
+			result.components.durability = {
+				damage: durability.damage,
+				maxDurability: durability.maxDurability
+			};
+		}
+		const dyeable = itemStack.getComponent(ItemComponentTypes.Dyeable);
+		if (dyeable) {
+			result.components.dyeColor = dyeable.color;
+		}
+		for (const id of itemStack.getDynamicPropertyIds()) {
+			result.dynamicProperties[id] = itemStack.getDynamicProperty(id);
+		}
+
+		return JSON.stringify(result);
 	}
 
 	/**
-	 * Parses the data of an ItemStack, allowing to retrieve the stringified ItemStack.
+	 * Parses the data of an ItemStack, allowing to retrieve the ItemStack.
 	 */
-	static parseItem(json) {
-		if (typeof (json) == "string") {
-			json = JSON.parse(json)
-		}
+	static parseItem(jsonString) {
+		const data = typeof jsonString === "string" ? JSON.parse(jsonString) : jsonString;
 
-		let item = new ItemStack(json.type, json.amount)
-		item.lockMode = json.lockMode
-		item.keepOnDeath = json.keepOnDeath
-		item.nameTag = json.nameTag
+		const itemStack = new ItemStack(data.typeId, data.amount ?? 1);
 
-		item.setCanDestroy(json.canDestroy)
-		item.setCanPlaceOn(json.canPlaceOn)
-		item.setLore(json.lore)
-
-		json.properties.forEach(property => {
-			item.setDynamicProperty(property.id, property.value)
-		})
-
-		if (item.getComponent("minecraft:durability")) {
-			item.getComponent("minecraft:durability").damage = json.durability
-		}
-
-		if (item.getComponent("minecraft:enchantable")) {
-			item.getComponent("minecraft:enchantable").addEnchantments(json.enchantments.map(enc => {
-				return {
-					level: enc.level,
-					type: new EnchantmentType(enc.type.id)
+		if (data.nameTag) itemStack.nameTag = data.nameTag;
+		if (data.lockMode) itemStack.lockMode = data.lockMode;
+		if (typeof data.keepOnDeath === "boolean") itemStack.keepOnDeath = data.keepOnDeath;
+		if (Array.isArray(data.lore)) itemStack.setLore(data.lore);
+		if (Array.isArray(data.canPlaceOn)) itemStack.setCanPlaceOn(data.canPlaceOn);
+		if (Array.isArray(data.canDestroy)) itemStack.setCanDestroy(data.canDestroy);
+		if (data.components) {
+			if (Array.isArray(data.components.enchantments)) {
+				const enchantable = itemStack.getComponent(ItemComponentTypes.Enchantable);
+				if (enchantable && data.components.enchantments.length > 0) {
+					enchantable.addEnchantments(data.components.enchantments.map(e => ({
+						type: new EnchantmentType(e.type),
+						level: e.level
+					})));
 				}
-			}))
+			}
+			if (data.components.durability) {
+				const durability = itemStack.getComponent(ItemComponentTypes.Durability);
+				if (durability) {
+					durability.damage = data.components.durability.damage;
+				}
+			}
+			if (data.components.dyeColor) {
+				const dyeable = itemStack.getComponent(ItemComponentTypes.Dyeable);
+				if (dyeable) {
+					dyeable.color = data.components.dyeColor;
+				}
+			}
+		}
+		if (data.dynamicProperties) {
+			for (const id in data.dynamicProperties) {
+				itemStack.setDynamicProperty(id, data.dynamicProperties[id]);
+			}
 		}
 
-		if (item.getComponent("minecraft:dyeable")) {
-			item.getComponent("minecraft:dyeable").color = json.dyeColor
-		}
-
-		return item
+		return itemStack;
 	}
 
 	/**
