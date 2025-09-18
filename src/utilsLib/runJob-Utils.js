@@ -16,12 +16,6 @@ new JobPromise(generator, progress => console.log("Progress:", progress))
 
 */
 
-
-/**
- * JobPromise class wraps a generator-based job and provides
- * .then(), .catch(), .finally() chaining like a normal Promise.
- * Supports optional progress reporting.
- */
 export default class JobPromise {
     /**
      * @param {Generator|Function} generator The generator function to run.
