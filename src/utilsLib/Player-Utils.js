@@ -495,7 +495,7 @@ export class PlayerUtils {
 	 * @param {ItemStack} [itemStack] The item stack to decrement, if available. Otherwise, gets from main hand.
 	 * @param {EntityEquippableComponent} [equippable] The player's equippable component for quick access, if available.
 	 */
-	static decrementMainHandItemStack(player, amount = 1, itemStack = undefined, equippable = undefined) {
+	static decrementMainhandItemStack(player, amount = 1, itemStack = undefined, equippable = undefined) {
 		if (this.isCreative(player)) return;
 
 		equippable ??= player.getComponent(EntityComponentTypes.Equippable);
@@ -516,7 +516,7 @@ export class PlayerUtils {
 	 * @param {Dimension} [dimension] The dimension for playing the item break sound if the item breaks (optional, if available).
 	 * @returns {boolean} `true` if the damaged item broke, `false` otherwise.
 	 */
-	static damageMainHandItemStack(player, itemStack = undefined, equippable = undefined, dimension = undefined) {
+	static damageMainhandItemStack(player, itemStack = undefined, equippable = undefined, dimension = undefined) {
 		if (this.isCreative(player)) return false;
 
 		equippable ??= player.getComponent(EntityComponentTypes.Equippable);
