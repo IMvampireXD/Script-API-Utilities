@@ -44,6 +44,31 @@ export class PlayerUtils {
 		player.runCommand(`camerashake stop @s`);
 	}
 
+	static thirdPersonOverShoulder(player, offset) {
+		const yawRadians = toRadians(player.getRotation().y);
+		const pitchRadians = toRadians(player.getRotation().x);
+		const sinYaw = Math.sin(yawRadians);
+		const cosYaw = Math.cos(yawRadians);
+		const sinPitch = Math.sin(pitchRadians);
+		const cosPitch = Math.cos(pitchRadians);
+		const deltaX = cosYaw * offset.x - sinYaw * offset.z;
+		const deltaZ = sinYaw * offset.x + cosYaw * offset.z;
+		const deltaY = cosPitch * offset.y + sinPitch * Math.sqrt(offset.x * offset.x + offset.z * offset.z);
+		const relativeOffset = {
+			x: player.location.x + cosPitch * deltaX,
+			y: player.location.y + deltaY,
+			z: player.location.z + cosPitch * deltaZ
+		};
+		player.camera.setCamera("minecraft:free", {
+			rotation: player.getRotation(),
+			location: relativeOffset,
+			easeOptions: {
+				easeTime: 0.2,
+				easeType: mc.EasingType.Linear,
+			},
+		});
+	}
+
 	/**
 	 * Checks if player is in creative mode.
 	 * @param {Player} player The player to check
