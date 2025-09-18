@@ -2,6 +2,7 @@ import { Player, EntityInventoryComponent, ItemStack, EnchantmentType } from "@m
 import { ItemStackUtils } from "./itemstack-utilities.js";
 
 export class InventoryUtils {
+
 	/**
 	 * Get a player's inventory component easily
 	 *
@@ -15,11 +16,17 @@ export class InventoryUtils {
 	 * Clears player's inventory
 	 * @param {Player} player
 	 */
-	static clearInventory(player) {
-		const container = InventoryUtils.getInventory(player);
-		for (let i = 0; i < container.size; i++) {
-			container.setItem(i, undefined);
-		}
+	static clear(player) {
+		const inventory = InventoryUtils.getInventory(player);
+		inventory.clearAll();
+		const equippableComp = player.getComponent("equippable");
+		const equipmentSlots = ["Chest", "Feet", "Head", "Legs", "Offhand"];
+		equipmentSlots.forEach(slot => {
+			const item = equippableComp.getEquipment(slot);
+			if (item) {
+				equippableComp.setEquipment(slot, null);
+			}
+		});
 	}
 
 	/**
