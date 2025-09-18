@@ -1,3 +1,24 @@
+export function getColorFromString(colorString) {
+    const colors = {
+        "blue": { red: 0, green: 0, blue: 1 },
+        "red": { red: 1, green: 0, blue: 0 },
+        "green": { red: 0, green: 1, blue: 0 },
+        "gray": { red: 0.5, green: 0.5, blue: 0.5 },
+        "black": { red: 0, green: 0, blue: 0 },
+        "yellow": { red: 1, green: 0.445, blue: 0 },
+        "cyan": { red: 0, green: 1, blue: 1 },
+        "magenta": { red: 1, green: 0, blue: 1 },
+        "orange": { red: 1, green: 0.26, blue: 0 },
+        "purple": { red: 0.5, green: 0, blue: 0.5 },
+        "brown": { red: 0.65, green: 0.16, blue: 0.16 }
+    };
+
+    return colors[colorString.toLowerCase()];
+}
+
+/////////////////////////////////////////////////////////////////
+
+
 const SECTION_SIGN = "§"
 
 // detail: https://minecraft.fandom.com/wiki/Formatting_codes
@@ -62,10 +83,10 @@ function createStylizer(extend) {
  * @example
  * ```js
  * color.green.italic.bold('Dedicated Ser') + color.reset('ver') + color.red.obfuscated('!!!')
- * // => '§a§o§lDedicated Ser§rver§c§k!!!'
+ * => '§a§o§lDedicated Ser§rver§c§k!!!'
  *
  * color.green.italic.bold('Dedicated Ser', color.reset('ver'), color.red.obfuscated('!!!'))
- * // => '§a§o§lDedicated Ser§rver§c§k!!!'
+ * => '§a§o§lDedicated Ser§rver§c§k!!!'
  * ```
  */
 export const color = /*#__PURE__*/ createStylizer([])
