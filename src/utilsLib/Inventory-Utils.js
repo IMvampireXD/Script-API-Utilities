@@ -41,7 +41,7 @@ export class InventoryUtils {
 	 * import { world } from "@minecraft/server";
 	 *
 	 * const player = world.getPlayers()[0];
-	 * const hasDiamonds = hasItem(player, "minecraft:diamond", 5);
+	 * const hasDiamonds = InventoryUtils.hasItem(player, "minecraft:diamond", 5);
 	 */
 	static hasItem(player, typeId, count = 1) {
 		const inv = InventoryUtils.getInventory(player);
@@ -59,7 +59,7 @@ export class InventoryUtils {
 	}
 
 	/**
-	 * Adds an item to player's inventory
+	 * Gives an item to a player. If the inventory is full, it will drop the item at the player's location.
 	 *
 	 * @param {Player} player - Player
 	 * @param {string} itemId - typeId of the Item
@@ -70,10 +70,10 @@ export class InventoryUtils {
 	 * @param {Object.<string, number>} [data.enchantments] - An object of Enchantments to apply.
 	 *
 	 * @example
-	 * addItem(player, "minecraft:apple", 3);
+	 * InventoryUtils.giveItem(player, "minecraft:apple", 3);
 	 *
 	 * @example
-	 * addItem(player, "minecraft:diamond_sword", 1, {
+	 * InventoryUtils.giveItem(player, "minecraft:diamond_sword", 1, {
 	 *   nameTag: "sword",
 	 *   lore: ["loreLine", "newLore"],
 	 *   enchantments: {
@@ -82,7 +82,7 @@ export class InventoryUtils {
 	 *   }
 	 * });
 	 */
-	static addItem(player, itemId, amount = 1, data = {}) {
+	static giveItem(player, itemId, amount = 1, data = {}) {
 		const container = InventoryUtils.getInventory(player);
 		const itemStack = new ItemStack(itemId, amount);
 		if (data.nameTag) itemStack.nameTag = data.nameTag;
@@ -90,7 +90,11 @@ export class InventoryUtils {
 		if (data.enchantments) {
 			ItemStackUtils.applyEnchantments(itemStack, data.enchantments);
 		}
-		container.addItem(itemStack);
+		if (container.emptySlotsCount >= 1) {
+			container.addItem(itemStack);
+		} else {
+			player.dimension.spawnItem(itemStack, player.location);
+		}
 	}
 
 	/**
@@ -102,11 +106,11 @@ export class InventoryUtils {
 	 *
 	 * @example
 	 * -// Remove 5 apples
-	 * removeItem(player, "minecraft:apple", 5);
+	 * InventoryUtils.removeItem(player, "minecraft:apple", 5);
 	 *
 	 * @example
 	 * -// Clear all apples
-	 * removeItem(player, "minecraft:apple");
+	 * InventoryUtils.removeItem(player, "minecraft:apple");
 	 */
 	static removeItem(player, itemId, amount = 0) {
 		const container = InventoryUtils.getInventory(player);

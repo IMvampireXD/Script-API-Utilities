@@ -2,6 +2,7 @@ import { VECTOR3_DOWN, VECTOR3_NORTH, Vector3Builder } from "./Vector3Utils.js";
 import { Entity, Player } from "@minecraft/server";
 
 export class EntityUtils {
+
 	/**
 	 * Checks if this entity is a player.
 	 * @param {Entity} entity
@@ -9,6 +10,16 @@ export class EntityUtils {
 	 */
 	static isPlayer(entity) {
 		return entity?.typeId === "minecraft:player";
+	}
+
+	/**
+	 * Checks if the entity is moving or not.
+	 * @param {Entity} entity
+	 * @returns {boolean}
+	 */
+	static isMoving(entity) {
+		const { x, y, z } = entity?.getVelocity();
+		return (x !== 0) || (y !== 0) || (z !== 0)
 	}
 
 	/**

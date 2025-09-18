@@ -10,6 +10,7 @@ import {
 	ItemComponentTypes,
 	EntityComponentTypes,
 	EntityEquippableComponent,
+	EasingType
 } from "@minecraft/server";
 
 export const CamShakeType = {
@@ -68,7 +69,7 @@ export class PlayerUtils {
 			location: relativeOffset,
 			easeOptions: {
 				easeTime: 0.2,
-				easeType: mc.EasingType.Linear,
+				easeType: EasingType.Linear,
 			},
 		});
 	}
@@ -269,8 +270,7 @@ export class PlayerUtils {
 	 */
 	static isMoving(player) {
 		const { x, y, z } = player?.getVelocity();
-		const speed = Math.hypot(x, y, z);
-		return speed > 0;
+		return (x !== 0) || (y !== 0) || (z !== 0)
 	}
 
 	/**

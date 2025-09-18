@@ -10,7 +10,8 @@ export class LocationUtils {
 	 * @param {number} zf - The scaling factor for the z direction.
 	 * @returns {{x: number, y: number, z: number}} The transformed location.
 	 */
-	static calcVectorOffset(player, xf, yf, zf, d = player.getViewDirection(), l = player.location) {
+	static calcVectorOffset(player, xf, yf, zf) {
+		const d = player.getViewDirection(), l = player.location
 		let m = Math.hypot(d.x, d.z);
 		let xx = LocationUtils.normalizeVector({
 			x: d.z,

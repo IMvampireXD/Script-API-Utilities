@@ -17,3 +17,5 @@ system.runInterval(() => {
 function getAvgTPS(decimals = 2) {
     return (TPS.reduce((prev, current) => prev + current) / TPS.length).toFixed(decimals)
 }
+
+export { getAvgTPS }
