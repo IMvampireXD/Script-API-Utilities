@@ -28,7 +28,9 @@ export class EntityUtils {
 		};
 		const vel = { x: viewVector.x * power, y: viewVector.y * power, z: viewVector.z * power };
 		const entity = source.dimension.spawnEntity(projectile, direction);
-		entity.getComponent("projectile").shoot(vel);
+		const projectileComp = entity.getComponent("projectile")
+		projectileComp.owner = source;
+		projectileComp.shoot(vel);
 
 		return entity;
 	}
@@ -67,26 +69,26 @@ export class EntityUtils {
 	}
 
 	/**
-     * Move an entity to a location using applyKnockback or applyImpulse
+	 * Move an entity to a location using applyKnockback or applyImpulse
     
-     * @author Coddy
-     * @param {Entity} entity The entity to move towards a location
-     * @param {Vector3} targetPos The location to move the entity to
-     * @param {number} speed The speed of moving the entity
-     * @returns {{x: number, z: number, strength: number, y: number} | {x: number, y: number, z: number}} Returns `{x, y, z}` if entity is not a player, otherwise returns `{ x, z, strength, y }`
-     * @example
-     * import { world } from "@minecraft/server"
-     * 
-     * const player = world.getPlayers()[0];
-     * const values = moveToLocation(player, { x: 10, y: 200, z: 5 }, 0.5);
-     * player.applyKnockback(values.x, values.z, values.strength, values.y);
-     * @example
-     * import { world } from "@minecraft/server"
-     * 
-     * const entity = world.getDimension("overworld").getEntities({ excludeTypes: ["minecraft:player"]})[0];
-     * const values = moveToLocation(entity, { x: 10, y: 200, z: 5 }, 0.5);
-     * entity.applyKnockback(values.x, values.z, values.strength, values.y);
-    */
+	 * @author Coddy
+	 * @param {Entity} entity The entity to move towards a location
+	 * @param {Vector3} targetPos The location to move the entity to
+	 * @param {number} speed The speed of moving the entity
+	 * @returns {{x: number, z: number, strength: number, y: number} | {x: number, y: number, z: number}} Returns `{x, y, z}` if entity is not a player, otherwise returns `{ x, z, strength, y }`
+	 * @example
+	 * import { world } from "@minecraft/server"
+	 * 
+	 * const player = world.getPlayers()[0];
+	 * const values = moveToLocation(player, { x: 10, y: 200, z: 5 }, 0.5);
+	 * player.applyKnockback(values.x, values.z, values.strength, values.y);
+	 * @example
+	 * import { world } from "@minecraft/server"
+	 * 
+	 * const entity = world.getDimension("overworld").getEntities({ excludeTypes: ["minecraft:player"]})[0];
+	 * const values = moveToLocation(entity, { x: 10, y: 200, z: 5 }, 0.5);
+	 * entity.applyKnockback(values.x, values.z, values.strength, values.y);
+	*/
 	static moveToLocation(entity, targetPos, speed) {
 		const pos = entity.location;
 		const dx = targetPos.x - pos.x,

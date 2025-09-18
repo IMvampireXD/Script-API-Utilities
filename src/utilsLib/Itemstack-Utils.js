@@ -63,6 +63,16 @@ export class ItemStackUtils {
 	}
 
 	/**
+	 * Check if the item is a tool
+	 * @param {ItemStack} item 
+	 */
+	static isTool(item) {
+		const toolTags = ["minecraft:is_axe", "minecraft:is_pickaxe", "minecraft:is_shovel", "minecraft:is_hoe", "minecraft:is_sword", "minecraft:is_tool", "minecraft:trident"];
+		const itemTags = item.getTags();
+		return toolTags.some(tag => itemTags.includes(tag));
+	}
+
+	/**
 	 * Serializes an ItemStack, allowing to save the ItemStack data into dynamic property storage.
 	 */
 	static stringifyItem(itemStack) {
