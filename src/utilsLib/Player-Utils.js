@@ -315,10 +315,10 @@ export class PlayerUtils {
 	 */
 	static getEntityLookingAt(player, maxDistance) {
 		try {
-			const rayEntity = player.getEntitiesFromViewDirection({ maxDistance: maxDistance })[0]
-				?.entity;
-			if (rayEntity) {
-				return rayEntity;
+			const rayEntity = player.getEntitiesFromViewDirection({ maxDistance: maxDistance })[0];
+
+			if (rayEntity.length > 0) {
+				return rayEntity?.entity;
 			}
 		} catch (e) { }
 	}

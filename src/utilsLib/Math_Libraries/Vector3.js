@@ -1,5 +1,5 @@
 /*
- * Copyright © 2023 Free Term Of Use bc ConMaster2112
+ * Copyright Â© 2023 Free Term Of Use bc ConMaster2112
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
