@@ -23,6 +23,40 @@ export class EntityUtils {
 	}
 
 	/**
+	 * Gets the villager's profession.
+	 * @param {Entity} entity - The villager entity.
+	 * @returns {string | null} The profession ID (e.g. "minecraft:farmer"), or null if not a villager.
+	 */
+	static getVillagerProfession(entity) {
+		if (!entity || entity.typeId !== "minecraft:villager") return null;
+
+		const variantComp = entity.getComponent("minecraft:variant");
+		if (!variantComp) return null;
+
+		const variant = variantComp.value;
+
+		const professions = {
+			0: "unemployed",
+			1: "farmer",
+			2: "fisherman",
+			3: "shepherd",
+			4: "fletcher",
+			5: "librarian",
+			6: "cartographer",
+			7: "cleric",
+			8: "armorer",
+			9: "weaponsmith",
+			10: "toolsmith",
+			11: "butcher",
+			12: "leatherworker",
+			13: "mason",
+			14: "nitwit"
+		};
+
+		return professions[variant] ?? null;
+	}
+
+	/**
 	 * Shoots a projectile from a entity's view direction.
 	 * @param {string} projectile The projectile typeId to shoot (example, "minecraft:arrow")
 	 * @param {number} power The speed of the projectile
