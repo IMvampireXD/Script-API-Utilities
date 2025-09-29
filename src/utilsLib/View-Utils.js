@@ -3,6 +3,57 @@ import { world, Entity } from "@minecraft/server";
 export class ViewUtils {
 
 /**
+ * Gets entities within a cone (field of view) in front of the given entity.
+ *
+ * @param {Entity} sourceEntity - The entity whose view direction is used.
+ * @param {number} [maxDistance=6] - Maximum distance to search (in blocks).
+ * @param {number} [fov=60] - Field of view angle in degrees.
+ * @param {object} [options={}] - Additional entity query options (e.g. type, families).
+ * @returns {Entity[]} Entities found within the cone of vision.
+ *
+ * @example
+ * import { world } from "@minecraft/server";
+ *
+ * for (const player of world.getPlayers()) {
+ *   const targets = getEntitiesFromAngle(player, 10, 45, { type: "minecraft:zombie" });
+ *   player.sendMessage(`Found ${targets.length} zombies in front of you!`);
+ * }
+ */
+static getEntitiesFromAngle(sourceEntity, maxDistance = 6, fov = 60, options = {}) {
+    const viewDir = sourceEntity.getViewDirection();
+    const pLoc = sourceEntity.location;
+    
+    const cosFov = Math.cos((fov * Math.PI) / 180);
+
+    const queryOptions = {
+        ...options,
+        maxDistance,
+        location: pLoc
+    };
+
+    const results = [];
+
+    for (const entity of sourceEntity.dimension.getEntities(queryOptions)) {
+        if (entity === sourceEntity) continue;
+
+        const dx = entity.location.x - pLoc.x;
+        const dy = entity.location.y - pLoc.y;
+        const dz = entity.location.z - pLoc.z;
+
+        const mag = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        if (mag === 0) continue;
+        
+        const cosAngle = (viewDir.x * dx + viewDir.y * dy + viewDir.z * dz) / mag;
+
+        if (cosAngle >= cosFov) {
+            results.push(entity);
+        }
+    }
+
+    return results;
+}
+
+/**
  * Get normalized direction vector from one point to another
  * @param {{x:number,y:number,z:number}} vector1 - start point
  * @param {{x:number,y:number,z:number}} vector2 - end point
