@@ -121,6 +121,51 @@ export class BlockUtils {
 		return connectedBlocks;
 	}
 
+static getBlockLocalCoord(block, coords) {
+  const blockRotation = block.permutation.getState("facing_direction");
+  let localX = 0;
+  let localY = 0;
+  let localZ = 0;
+
+  switch (blockRotation) {
+      case 0: // Down
+          localX = coords.x;
+          localY = -coords.y; 
+          localZ = coords.z;
+          break;
+      case 1: // Up
+          localX = coords.x;
+          localY = coords.y; 
+          localZ = coords.z;
+          break;
+      case 2: // North
+          localX = -coords.x;
+          localY = coords.y;
+          localZ = -coords.z; 
+          break;
+      case 3: // South
+          localX = coords.x;
+          localY = coords.y;
+          localZ = coords.z;
+          break;
+      case 4: // West
+          localX = -coords.z;
+          localY = coords.y;
+          localZ = coords.x;
+          break;
+      case 5: // East
+          localX = coords.z;
+          localY = coords.y;
+          localZ = -coords.x;
+          break;
+  }
+  return { 
+      x: localX + block.location.x, 
+      y: localY + block.location.y, 
+      z: localZ + block.location.z 
+  };
+}
+			
 	/**
 	 * Retrieves the redstone power level of a specified block.
 	 * 
