@@ -105,6 +105,21 @@ export class AngleUtils {
 
 		return a + delta * t;
 	}
+
+static normalizeAngle(angle) {
+  return ((angle + 180) % 360) - 180;
+}
+
+static angularDifference(angle1, angle2) {
+  let diff = normalizeAngle(angle1 - angle2);
+  return Math.abs(diff);
+}
+
+static isAngleInRange(angle, centerAngle, range) {
+  const diff = angularDifference(angle, centerAngle);
+  return diff <= range / 2;
+}
+	
 }
 
 /**
