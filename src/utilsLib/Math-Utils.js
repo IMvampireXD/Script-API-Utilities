@@ -1,3 +1,28 @@
+
+export function lerp(a, b, t) {
+   return a + (b - a) * t;
+}
+export function sigmoidLerp(a, b, t, curveFactor = 2) {
+   const midpoint = 0.5;
+   const distanceToMid = Math.abs(b - midpoint);
+   const easeFactor = 1 - Math.pow(distanceToMid * 2, curveFactor); // More aggressive with higher curveFactor
+   const adaptiveT = 0.02 + easeFactor * 0.2; // Min 0.02, Max 0.22
+   return a + (b - a) * adaptiveT;
+}
+export function cuboidLerp(a, b, t) {
+   return a + (b - a) * (4 * Math.pow(t - 0.5, 3) + 0.5);
+}
+export function directionalLerp(a, b, t) {
+   const optimal = 0.2;
+   const movingTowards = Math.abs(b - optimal) < Math.abs(a - optimal);
+   const slowSpeed = 0.15;
+   const fastSpeed = 1.0;
+   const k = movingTowards ? fastSpeed : slowSpeed;
+   const frac = Math.min(1, k * t);
+
+   return a + (b - a) * frac;
+}
+
 export class MathUtils {
 
 	static roundToNearestQuarter(value) {
