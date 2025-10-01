@@ -32,6 +32,15 @@ export class LocationUtils {
 		};
 	}
 
+static rotateVector(vector, times) {
+    const rotations = times % 4
+    let { x, y, z } = vector
+    for (let i = 0; i < rotations; i++) {
+        [x, z] = [z, -x]
+    }
+    return { x, y, z };
+}
+	
 	/**
 	 * Rotates a given offset vector (offset) based on a specified StructureRotation (None, 90°, 180°, or 270° clockwise).
 	 * @param offset 
@@ -112,6 +121,12 @@ export class LocationUtils {
 		return Math.sqrt(dx * dx + dy * dy + dz * dz);
 	}
 
+static calculateDistanceWithoutY(vectorA, vectorB) {
+    const dx = vectorA.x - vectorB.x;
+    const dz = vectorA.z - vectorB.z;
+    return Math.sqrt(dx * dx + dz * dz);
+}
+	
 	/**
 	 * Calculates the magnitude of a Vector3.
 	 * @param {Vector3} entityPosition - The Vector3 input.
