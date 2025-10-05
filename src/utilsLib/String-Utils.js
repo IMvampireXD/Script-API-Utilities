@@ -8,6 +8,11 @@ export class StringUtils {
 		return typeof value === 'string' || value instanceof String;
 	}
 
+	static reverseString(str) {
+		if (!this.isString(str)) throw new TypeError('Expected a string');
+		return str.split('').reverse().join('');
+	}
+
 	/**
 	 * Converts a string to a typeId format.
 	 * Example: "The End" -> "the_end"

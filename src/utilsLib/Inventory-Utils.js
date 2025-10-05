@@ -13,7 +13,7 @@ export class InventoryUtils {
 	}
 
 	/**
-	 * Clears player's inventory
+	 * Clears player's inventory, including offhand and eqquipped armors.
 	 * @param {Player} player
 	 */
 	static clear(player) {

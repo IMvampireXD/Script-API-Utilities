@@ -1,5 +1,5 @@
 
-export const autoSmeltItems = {
+export const smeltItems = {
     "minecraft:cod": "minecraft:cooked_cod",
     "minecraft:beef": "minecraft:cooked_beef",
     "minecraft:chicken": "minecraft:cooked_chicken",
@@ -113,7 +113,7 @@ export const groundBlocks = new Set([
     "minecraft:amethyst_block",
 ]);
 
-export const mobTypes = new Set([
+export const hostileMobTypes = new Set([
     "minecraft:zombie",
     "minecraft:skeleton",
     "minecraft:spider",
@@ -165,7 +165,7 @@ export const mobTypes = new Set([
     "minecraft:piglin_brute"
 ]);
 
-export const animalTypes = new Set([
+export const passiveMobTypes = new Set([
     "minecraft:cow",
     "minecraft:mooshroom",
     "minecraft:pig",

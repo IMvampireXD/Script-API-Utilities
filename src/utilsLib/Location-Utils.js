@@ -32,15 +32,15 @@ export class LocationUtils {
 		};
 	}
 
-static rotateVector(vector, times) {
-    const rotations = times % 4
-    let { x, y, z } = vector
-    for (let i = 0; i < rotations; i++) {
-        [x, z] = [z, -x]
-    }
-    return { x, y, z };
-}
-	
+	static rotateVector(vector, times) {
+		const rotations = times % 4
+		let { x, y, z } = vector
+		for (let i = 0; i < rotations; i++) {
+			[x, z] = [z, -x]
+		}
+		return { x, y, z };
+	}
+
 	/**
 	 * Rotates a given offset vector (offset) based on a specified StructureRotation (None, 90°, 180°, or 270° clockwise).
 	 * @param offset 
@@ -108,6 +108,20 @@ static rotateVector(vector, times) {
 	}
 
 	/**
+	 * Get normalized direction vector from one point to another
+	 * @param {{x:number,y:number,z:number}} vector1 - start point
+	 * @param {{x:number,y:number,z:number}} vector2 - end point
+	 * @returns {{x:number,y:number,z:number}}
+	 */
+	static getDirection(vector1, vector2) {
+		const dx = vector2.x - vector1.x;
+		const dy = vector2.y - vector1.y;
+		const dz = vector2.z - vector1.z;
+		const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+		return { x: dx / distance, y: dy / distance, z: dz / distance };
+	}
+
+	/**
 	 * Returns the distance between two Vector3 locations.
 	 * @param {Vector3} pos1 - First position
 	 * @param {Vector3} pos2 - Second position
@@ -121,12 +135,12 @@ static rotateVector(vector, times) {
 		return Math.sqrt(dx * dx + dy * dy + dz * dz);
 	}
 
-static calculateDistanceWithoutY(vectorA, vectorB) {
-    const dx = vectorA.x - vectorB.x;
-    const dz = vectorA.z - vectorB.z;
-    return Math.sqrt(dx * dx + dz * dz);
-}
-	
+	static calculateDistanceWithoutY(vectorA, vectorB) {
+		const dx = vectorA.x - vectorB.x;
+		const dz = vectorA.z - vectorB.z;
+		return Math.sqrt(dx * dx + dz * dz);
+	}
+
 	/**
 	 * Calculates the magnitude of a Vector3.
 	 * @param {Vector3} entityPosition - The Vector3 input.

@@ -1,5 +1,6 @@
 /**
  * Calculating player experience
+ * @author Lete114
  */
 export class Experience {
     #level = 0

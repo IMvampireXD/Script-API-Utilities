@@ -57,6 +57,71 @@ export class EntityUtils {
 	}
 
 	/**
+	 * Function to check whether the entity is in underground or not.
+	 * @author Serty
+	 * @param {Entity} entity The entity to test if they are underground
+	 * @returns {boolean}
+	 * @example
+	 * import { world } from "@minecraft/server"
+	 *
+	 * const player = world.getPlayers()[0];
+	 * isUnderground(player);
+	 */
+	static isUnderground(entity) {
+		if (entity.dimension.heightRange.min > entity.location.y) return true;
+		if (entity.dimension.heightRange.max < entity.location.y) return false;
+
+		let block = entity.dimension.getTopmostBlock(entity.location);
+		if (entity.location.y >= block.y) return false;
+		while (!block.isSolid && block.y > entity.dimension.heightRange.min) {
+			if (entity.location.y >= block.y) return false;
+			block = block.below();
+		}
+		return true;
+	}
+
+	/**
+	 * Checks if an entity is in direct sunlight.
+	 * It checks if it is daytime, and if the entity is in surface with no blocks above it.
+	 * 
+	 * @param {Entity} entity - The entity to test.
+	 * @returns {boolean} True if the entity is in sunlight.
+	 */
+	static isInSunlight(entity) {
+		const dimension = entity.dimension;
+		const { x, y, z } = entity.location;
+		const time = world.getTimeOfDay();
+		if (time < 0 || time >= 12000) return false;
+		const topBlock = dimension.getTopmostBlock({ x, z });
+		if (!topBlock) return false;
+		if (y >= topBlock.y + 1) return true;
+		const aboveTop = dimension.getBlock({ x, y: topBlock.y + 1, z });
+		if (!aboveTop || !aboveTop.isSolid) {
+			return y >= topBlock.y + 1;
+		}
+		return false;
+	}
+
+	/**
+	 * Get the Cardinal direction of the entity
+	 * @author GST378
+	 * @author finnafinest_
+	 * @param {Entity} entity The entity to get the Cardinal direction of
+	 * @returns {"up"|"down"|"north"|"east"|"south"|"west"}
+	 */
+	static getCardinalDirection(entity) {
+		const yaw = entity.getRotation().y;
+		const pitch = entity.getRotation().x;
+		if (pitch > 85) return "down";
+		if (pitch < -85) return "up";
+		if (yaw >= -45 && yaw < 45) return "north";
+		else if (yaw >= 45 && yaw < 135) return "east";
+		else if (yaw >= 135 || yaw < -135) return "south";
+		else return "west";
+	}
+
+
+	/**
 	 * Shoots a projectile from a entity's view direction.
 	 * @param {string} projectile The projectile typeId to shoot (example, "minecraft:arrow")
 	 * @param {number} power The speed of the projectile

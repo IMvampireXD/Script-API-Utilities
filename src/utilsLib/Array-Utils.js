@@ -16,6 +16,20 @@ export class ArrayUtils {
 	}
 
 	/**
+	 * Gets a random element from an array.
+	 * 
+	 * @example
+	 * const colors = ['red', 'green', 'blue'];
+	 * const randomColor = ArrayUtils.getRandomElement(colors);
+	 * console.log(randomColor); // e.g. 'green'
+	 */
+	static getRandomElement(array) {
+		if (!Array.isArray(arr) || array.length === 0) return undefined;
+		const index = Math.floor(Math.random() * array.length);
+		return array[index];
+	}
+
+	/**
 	 * Removes an element from an array at a specified index by using the swap-pop technique:
 	 * swaps it with the last element, then pops (O(1)). Order is NOT preserved.
 	 * @param {Array} array - The array to remove an element from.
