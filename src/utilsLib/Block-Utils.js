@@ -334,6 +334,11 @@ export class BlockUtils {
 		dimension.runCommand(`setblock ${location.x} ${location.y} ${location.z} air destroy`);
 	}
 
+	static getAllStates(block) {
+		const states = block.permutation.getAllStates();
+		return JSON.stringify(states);
+	}
+
 	/**
 	 * Get all components of a block.
 	 * 

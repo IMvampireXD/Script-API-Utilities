@@ -1,5 +1,5 @@
 import { VECTOR3_DOWN, VECTOR3_NORTH, Vector3Builder } from "./Vector3Utils.js";
-import { Entity, Player } from "@minecraft/server";
+import { Entity, Player, EntityComponentTypes, world } from "@minecraft/server";
 
 export class EntityUtils {
 
@@ -54,6 +54,32 @@ export class EntityUtils {
 		};
 
 		return professions[variant] ?? null;
+	}
+
+	/**
+	 * Checks if the entity is tamed by player.
+	 * @param {Entity} entity The entity to check if it is tamed
+	 * @returns {boolean} True if the entity is tamed, false otherwise
+	 */
+	static isTamed(entity) {
+		if (!entity.isValid) return false;
+		const tameable = entity.getComponent(EntityComponentTypes.Tameable);
+		if (!tameable) return false;
+		return tameable.isTamed;
+	}
+
+	/**
+	 * Gets the owner of a tamed entity.
+	 * @param {Entity} entity The entity to get the owner of
+	 * @returns {Player | undefined} The owner of the entity, or undefined if the entity is not tamed or if the entity is not valid or has no owner.
+	 */
+	static getOwner(entity) {
+		if (!entity.isValid) return;
+		const tameable = entity.getComponent(EntityComponentTypes.Tameable);
+		if (!tameable) return;
+		const playerId = tameable.tamedToPlayer?.id;
+		if (!playerId) return;
+		return world.getAllPlayers().find((p) => p.id === playerId);
 	}
 
 	/**

@@ -147,6 +147,19 @@ export class PlayerUtils {
 	}
 
 	/**
+	 * Checks if the entity is tamed by the specefic player.
+	 * @param {Entity} entity The entity to check if it is owned by the player
+	 * @param {Player} player The player to check if they own the entity
+	 * @return {boolean}
+	 */
+	static isOwner(entity, player) {
+		if (!entity.isValid) return false;
+		const tameable = entity.getComponent(EntityComponentTypes.Tameable);
+		if (!tameable) return false;
+		return tameable?.tamedToPlayer?.id === player.id;
+	}
+
+	/**
 	 * The current applyImpulse method is very buggy on players, so this is a new implementation
 	 * of applyImpulse. This one tries to replicate the behavior of
 	 * the normal impulse as much as possible.
