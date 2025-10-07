@@ -1,20 +1,20 @@
 import { system } from '@minecraft/server';
 
-/*  EXAMPLE USAGE:
-
-const generator = function* () {
-    for (let i = 0; i <= 10; i++) {
-        yield i / 10; // progress
-    }
-    return "done";
-};
-
-new JobPromise(generator, progress => console.log("Progress:", progress))
-    .then(result => console.log("Result:", result))
-    .catch(err => console.error(err))
-    .finally(() => console.log("Job finished!"));
-
-*/
+/**
+ * EXAMPLE USAGE:
+ * 
+ * const generator = function* () {
+ *     for (let i = 0; i <= 10; i++) {
+ *         yield i / 10; // progress
+ *     }
+ *     return "done";
+ * };
+ *
+ * new JobPromise(generator, progress => console.log("Progress:", progress))
+ *     .then(result => console.log("Result:", result))
+ *     .catch(err => console.error(err))
+ *     .finally(() => console.log("Job finished!"));
+ */
 
 export default class JobPromise {
     /**
@@ -63,29 +63,40 @@ export default class JobPromise {
         const runGenerator = () =>
             new Promise((resolve, reject) => {
                 if (system.runJob) {
+                    const marker = Symbol("runJobStatus");
+                    system[marker] = false;
+
                     system.runJob(
                         (function* () {
                             let lastTick = 0;
-                            while (true) {
-                                try {
+                            try {
+                                while (true) {
                                     const { done, value } = generator.next();
                                     if (done) {
                                         resolve(value);
+                                        system[marker] = true;
                                         return;
-                                    } else if (onProgress) {
-                                        if (system.currentTick !== lastTick) {
+                                    } else {
+                                        if (onProgress && system.currentTick !== lastTick) {
                                             onProgress(value);
                                             lastTick = system.currentTick;
                                         }
+                                        yield;
                                     }
-                                    yield;
-                                } catch (err) {
-                                    reject(err);
-                                    return;
                                 }
+                            } catch (err) {
+                                reject(err);
+                                system[marker] = true;
+                                return;
                             }
                         })()
                     );
+
+                    (async () => {
+                        while (!system[marker]) await system.waitTicks(1);
+                        delete system[marker];
+                    })();
+
                 } else {
                     console.warn(
                         'system.runJob is not available. Running job in an inefficient way.'
@@ -99,13 +110,15 @@ export default class JobPromise {
                                 if (done) {
                                     resolve(value);
                                     return;
-                                } else if (onProgress && !sentProgress) {
-                                    onProgress(value);
-                                    sentProgress = true;
-                                }
-                                if (Date.now() - startTime > 4) {
-                                    system.runTimeout(run, 1);
-                                    return;
+                                } else {
+                                    if (onProgress && !sentProgress) {
+                                        onProgress(value);
+                                        sentProgress = true;
+                                    }
+                                    if (Date.now() - startTime > 4) {
+                                        system.runTimeout(run, 1);
+                                        return;
+                                    }
                                 }
                             } catch (err) {
                                 reject(err);
