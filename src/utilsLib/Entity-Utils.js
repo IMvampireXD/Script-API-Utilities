@@ -23,6 +23,31 @@ export class EntityUtils {
 	}
 
 	/**
+	 * Adds health to an entity.
+	 * @param {Entity} entity - The entity to heal.
+	 * @param {number} hp - The amount of health to add.
+	 * @returns {void}
+	 */
+	static addHP(entity, hp) {
+		if (!entity.isValid) return;
+		const health = entity.getComponent("health");
+		if (health) health.setCurrentValue(Math.min(health.currentValue + hp, health.effectiveMax));
+	}
+
+	static isFamily(entity, family) {
+		return entity.runCommand(`testfor @s[family=${family}]`).successCount > 0;
+	}
+
+	/**
+	 * Checks if an entity is alive.
+	 * @param {Entity} entity - The entity to check.
+	 * @returns {boolean} True if the entity is alive, false otherwise.
+	 */
+	static isAlive(entity) {
+		return entity?.getComponent("health")?.currentValue > 0;
+	}
+
+	/**
 	 * Gets the villager's profession.
 	 * @param {Entity} entity - The villager entity.
 	 * @returns {string | null} The profession ID (e.g. "minecraft:farmer"), or null if not a villager.

@@ -10,7 +10,8 @@ import {
 	ItemComponentTypes,
 	EntityComponentTypes,
 	EntityEquippableComponent,
-	EasingType
+	EasingType,
+	HudVisibility
 } from "@minecraft/server";
 
 export const CamShakeType = {
@@ -47,6 +48,21 @@ export class PlayerUtils {
 	 */
 	static stopCameraShake(player) {
 		player.runCommand(`camerashake stop @s`);
+	}
+
+	/**
+	 * Hide the player's HUD.
+	 * @param {Player} player 
+	 */
+	static hideHud(player) {
+		player.onScreenDisplay.setHudVisibility(HudVisibility.Hide);
+	}
+	/**
+	 * Show the player's HUD.
+	 * @param {Player} player
+	 */
+	static showHud(player) {
+		player.onScreenDisplay.setHudVisibility(HudVisibility.Reset);
 	}
 
 	static thirdPersonOverShoulder(player, offset) {
@@ -406,16 +422,14 @@ export class PlayerUtils {
 	 * @throws If player is not a Player.
 	 */
 	static isRidingEntity(player, entityType = "any") {
-		if (!player?.isValid) console.warn("Invalid player.");
-		const riding = player.getComponent("riding");
+		if (!player.isValid) return;
+		const riding = player.getComponent("minecraft:riding");
 		const isRiding = riding?.entityRidingOn;
 
 		if (entityType === "any") {
-			if (!isRiding) return false;
-			else if (isRiding) return true;
+			return !!isRiding;
 		} else {
-			if (!isRiding) return false;
-			else if (isRiding.typeId === entityType) return true;
+			return !!isRiding && isRiding.typeId === entityType;
 		}
 	}
 

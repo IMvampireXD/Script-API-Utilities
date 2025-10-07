@@ -1,6 +1,18 @@
 import { Vec3 } from "Vec3-Utils.js";
+import { Dimension } from "@minecraft/server";
 
 export class LocationUtils {
+
+	/**
+	 * Checks if a location is valid within dimension height range and if the chunk is loaded.
+	 * @param {Dimension} dimension - The dimension to check in.
+	 * @param {Vector3} pos - The location to check.
+	 * @returns {boolean} True if the location is valid and the chunk is loaded, false otherwise.
+	 */
+	static isBlockLocationValid(dimension, pos) {
+		const { max, min } = dimension.heightRange;
+		return pos.y >= min && pos.y < max && dimension.isChunkLoaded(pos);
+	}
 
 	/**
 	 * Finds a location based on their view direction and the scaling factors from the players current position, the same as ^^^ in commands.
