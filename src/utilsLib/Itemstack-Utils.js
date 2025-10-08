@@ -9,6 +9,8 @@ import {
 	ItemComponentTypes
 } from "@minecraft/server";
 
+import { toolTypes } from "./Types";
+
 export class ItemStackUtils {
 
 	/**
@@ -64,12 +66,13 @@ export class ItemStackUtils {
 
 	/**
 	 * Check if the item is a tool
-	 * @param {ItemStack} item 
+	 * @param {ItemStack} item
+	 *  @returns {boolean} returns true if item is a tool
 	 */
 	static isTool(item) {
 		const toolTags = ["minecraft:is_axe", "minecraft:is_pickaxe", "minecraft:is_shovel", "minecraft:is_hoe", "minecraft:is_sword", "minecraft:is_tool", "minecraft:trident"];
 		const itemTags = item.getTags();
-		return toolTags.some(tag => itemTags.includes(tag));
+		return toolTypes.includes(item.typeId) || toolTags.some(tag => itemTags.includes(tag));
 	}
 
 	/**

@@ -2,7 +2,31 @@ import * as mc from "@minecraft/server";
 
 const { ItemStack, world } = mc;
 
+import { nonSolidBlockTypes } from "./Types";
+
 export class BlockUtils {
+
+	static isSolid(block) {
+		const isSolid = block?.dimension.getBlockFromRay(
+			block.center(),
+			{ x: 0, y: 0.1, z: 0 },
+			{
+				maxDistance: 1,
+				includeLiquidBlocks: true,
+				includePassableBlocks: false,
+			}
+		);
+		return isSolid ? true : false;
+	}
+
+	static isNonSolid(block) {
+		if (block) {
+			return block.isAir || nonSolidBlockTypes.has(block.typeId) || block.isLiquid;
+		} else {
+			return false;
+		}
+	}
+
 	/**
 	 * Cancels the breaking of a specific block type.
 	 * @param {string} blockTypeId The type ID of the block to cancel breaking of.
