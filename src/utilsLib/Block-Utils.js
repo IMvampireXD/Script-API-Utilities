@@ -363,6 +363,12 @@ export class BlockUtils {
 		return JSON.stringify(states);
 	}
 
+	static setPermutation(block, stateAdd, stateValue) {
+		const result = block.permutation.getAllStates();
+		result[stateAdd] = stateValue;
+		block.setPermutation(mc.BlockPermutation.resolve(block?.typeId, result));
+	}
+
 	/**
 	 * Get all components of a block.
 	 * 

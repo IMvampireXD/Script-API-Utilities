@@ -29,15 +29,16 @@ export class StringUtils {
 	}
 
 	/**
-	 * Converts a typeId to a display name format.
-	 * Example: "the_end" -> "The End"
+	 * Converts a typeId string to a display name format.
+	 * Example: "minecraft:the_end" -> "The End"
 	 * @param {string} typeId
 	 * @returns {string} string
 	 */
 	static formatToDisplayName(typeId) {
-		return typeId
+		const str = typeId.includes(":") ? typeId.split(":")[1] : typeId;
+		return str
 			.split("_")
-			.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+			.map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
 			.join(" ");
 	}
 
