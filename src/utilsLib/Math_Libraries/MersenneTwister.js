@@ -56,7 +56,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * See also: setSeed(seed).
  */
 
-function MersenneTwister(seed) {
+export default function MersenneTwister(seed) {
     if (arguments.length == 0)
         seed = new Date().getTime();
 
@@ -198,14 +198,3 @@ MersenneTwister.prototype.next = function () {
     var a = this._nextInt() >>> 5, b = this._nextInt() >>> 6;
     return (a * 0x4000000 + b) / 0x20000000000000;
 };
-
-
-/**
- * export as default (added by obscraft)
- */
-
-function MTgen(seed) {
-    return new MersenneTwister(seed);
-}
-
-export default MTgen;
