@@ -1,20 +1,21 @@
 {
-	"name": "script-api-utilities",
-	"modules": "new_api/src/index.ts",
-	"type": "module",
-	"private": true,
-	"scripts": {
-		"format": "prettier --write ."
-	},
-	"devDependencies": {
-		"@types/bun": "latest",
-		"prettier": "^3.5.3"
-	},
-	"peerDependencies": {
-		"typescript": "^5"
-	},
-	"dependencies": {
-		"@minecraft/server": "^2.3.0-beta.1.21.111-stable",
-		"@minecraft/server-ui": "^2.1.0-beta.1.21.95-stable"
-	}
+  "name": "script-api-utilities",
+  "modules": "new_api/src/index.ts",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "@bedrock-apis/env-types": "^1.0.0-beta.5",
+    "@types/bun": "latest",
+    "prettier": "^3.5.3"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@minecraft/server": "^2.5.0-beta.1.21.131-stable",
+    "@minecraft/server-ui": "^2.1.0-beta.1.21.95-stable"
+  }
 }
